@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "205578501902",
+    "project_id": "fentarim-c479e",
+    "storage_bucket": "fentarim-c479e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:205578501902:android:0e919009bf38aa23c2615f",
+        "android_client_info": {
+          "package_name": "com.example.bookmap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "205578501902-9cavrth3d59lsje4hvbo7kvsl68vhf9u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bookmap",
+            "certificate_hash": "b2739b60d1b630b208c9f9860a1a5384a0ed6781"
+          }
+        },
+        {
+          "client_id": "205578501902-5ij341acr2ct71mpr8rnv73bjhdiucvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgaycqfp5RTa83bskUumkhWzgzVu6PGWY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "205578501902-16r20psm95d2tvrquidvp4ftl05mf6uu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
