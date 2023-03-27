@@ -46,7 +46,8 @@ class Authentication extends StatelessWidget {
       stream: firebaseauth.FirebaseAuth.instance.authStateChanges(),
       //snapshot: stream의 결과물, 스트림빌더에게 사용하도록 지정해주는 데이터
       builder: (context, snapshot){
-          if(!snapshot.hasData){ //로그인을 하지 않은 경우
+          if(!snapshot.hasData){
+            ;//로그인을 하지 않은 경우
           return SignInScreen(
             showAuthActionSwitch: false,
             providerConfigs: const[
