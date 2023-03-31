@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutterfire_ui/auth.dart';
-//import 'package:flutter/services.dart';
-//import 'package:google_sign_in/google_sign_in.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,28 +45,29 @@ class Authentication extends StatelessWidget {
       //snapshot: stream의 결과물, 스트림빌더에게 사용하도록 지정해주는 데이터
       builder: (context, snapshot){
           if(!snapshot.hasData){
-            ;//로그인을 하지 않은 경우
+            //로그인을 하지 않은 경우
           return SignInScreen(
             showAuthActionSwitch: false,
             providerConfigs: const[
               GoogleProviderConfiguration(clientId: '103491580015438144329'),
             ],
             headerBuilder: (context, constraints, _) {
-              return Container(
-                margin: EdgeInsets.only(top: 50, bottom: 20),
-                //lib\src\auth\screens\internal\responsive_page.dart 에 크기 조절하는 부분있음.
-                child: Image.asset('images/logo.png', fit: BoxFit.fitHeight,),
+              return Center(
+                child: Container(
+                    padding: EdgeInsets.only(top:50, bottom: 20),
+                    //lib\src\auth\screens\internal\responsive_page.dart 에 크기 조절하는 부분있음.
+                    child: Image.asset('images/logo.png', fit: BoxFit.fitHeight,),
+                  ),
               );
             },
             footerBuilder: (context, _){
               return const Padding(
-                padding: EdgeInsets.only(top: 10),
+                padding: EdgeInsets.only(top: 20),
                 child: Text('최초 로그인 시 북맵 회원가입이 진행됩니다.',
                 style: TextStyle(color: Colors.grey),)
               );
             },
           );
-          Text('${snapshot.data?.providerData}');
           }
           else {
             return MyApp();
