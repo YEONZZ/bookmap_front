@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'pages/home.dart';
-import 'pages/search.dart';
+import 'pages/library.dart';
 import 'pages/bookmap.dart';
 import 'pages/profile.dart';
 
-void main() => runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,7 +38,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    Home(), Search(), BookMap(), Profile()
+    Home(), Library(), BookMap(), Profile()
   ];
 
   void _onItemTapped(int index) {

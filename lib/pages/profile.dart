@@ -112,7 +112,7 @@ class Profile extends StatelessWidget {
                       shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),),
                     backgroundColor: Colors.white),
-                    child:const Column(
+                    child: Column(
                       children: [
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text('완독', style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
@@ -124,7 +124,7 @@ class Profile extends StatelessWidget {
                     style: TextButton.styleFrom(
                         shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26), borderRadius: BorderRadius.all(Radius.circular(0))),
                         backgroundColor: Colors.white),
-                    child:const Column(
+                    child: Column(
                       children: [
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text('페이지',
@@ -136,7 +136,7 @@ class Profile extends StatelessWidget {
                 child: TextButton(onPressed: (){},
                     style: TextButton.styleFrom(backgroundColor: Colors.white,
                         shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26), borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),)),
-                    child:const Column(
+                    child: Column(
                       children: [
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text('일', style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
