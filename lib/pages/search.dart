@@ -1,3 +1,4 @@
+import 'package:bookmap/pages/library.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -46,11 +47,18 @@ class _HttpApp extends State<HttpApp> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: appcolor,
         title: TextField(
           controller: _editingController,
           style: TextStyle(color: Colors.white),
           keyboardType: TextInputType.text,
           decoration: InputDecoration(hintText: '검색어를 입력하세요'),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
         actions: <Widget>[
           IconButton(onPressed: (){
