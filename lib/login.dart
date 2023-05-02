@@ -25,6 +25,7 @@ class Login extends StatelessWidget {
     );
   }
 }
+
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -50,9 +51,7 @@ class Authentication extends StatelessWidget {
           return Container(
             color: Color(0xFFFAFAFA),
             padding: EdgeInsets.only(top: 150),
-            //이렇게 조정하는게 맞나,,,,
             child: SignInScreen(
-
               //headerMaxExtent: double.infinity,
               showAuthActionSwitch: false,
               providerConfigs: const[

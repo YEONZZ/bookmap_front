@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/material.dart';
 import 'search.dart';
 import 'profile.dart';
@@ -49,6 +50,7 @@ class FirstPage extends StatefulWidget {
 }
 
 class _FirstPage extends State<FirstPage> {
+  final _authentication = firebaseauth.FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -56,7 +58,8 @@ class _FirstPage extends State<FirstPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("OO님의 서재"),
+          title: Text("${_authentication.currentUser?.displayName}님의 서재",
+              style: const TextStyle(color: Colors.black, fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold,)),
           actions: <Widget>[
             IconButton(onPressed: (){
               Navigator.of(context).pushNamed('/profile');

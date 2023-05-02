@@ -1,30 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
-
-const MaterialColor appcolor = MaterialColor(
-  _appcolor,
-  <int, Color>{
-    50: Color(0xFFD9E8DA),
-    100: Color(0xFFB9D7BB),
-    200: Color(0xFFA2C9A3),
-    300: Color(0xFF93B696),
-    400: Color(0xFF85A485),
-    500: Color(_appcolor),
-    600: Color(0xFF8DC08D),
-    700: Color(0xFF7FAD7F),
-    800: Color(0xFF4E544F),
-    900: Color(0xFF323632),
-  },);
-const int _appcolor = 0xFFB9D7BB;
+import 'package:bookmap/design/color.dart';
+import '../login.dart';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    final _authentication = firebaseauth.FirebaseAuth.instance;
-    return Scaffold(
+    //final _authentication = firebaseauth.FirebaseAuth.instance;
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyStatelessWidget(),
+    );
+  }
+}
 
-      //AppBar
+// scroll view 구현을 위한 수정 (4-28)
+class MyStatelessWidget extends StatelessWidget{
+  MyStatelessWidget({Key? key}) : super(key: key);
+  final _authentication = firebaseauth.FirebaseAuth.instance;
+  Widget build(BuildContext context){
+    return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text('마이페이지',
@@ -38,13 +34,17 @@ class Profile extends StatelessWidget {
               ),
               onPressed: (){
                 _authentication.signOut();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage())
+                );
               }
           )
         ],
       ),
-
-      //Body: 고객 정보
-      body: Column(
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
           children: [
             Row(
               children: [
@@ -83,10 +83,10 @@ class Profile extends StatelessWidget {
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(appcolor.shade50),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          side: BorderSide(color: appcolor.shade50)
-                        )),),
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: BorderSide(color: appcolor.shade50)
+                            )),),
                       child: const Text("프로필 편집", style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold),)),),
                 const Expanded(flex: 1,child: Padding(padding: EdgeInsets.only(left: 10)),),
                 Expanded(
@@ -109,9 +109,9 @@ class Profile extends StatelessWidget {
                   child: TextButton(
                     onPressed: (){},
                     style: TextButton.styleFrom(
-                      shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),),
-                    backgroundColor: Colors.white),
+                        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),),
+                        backgroundColor: Colors.white),
                     child: Column(
                       children: [
                         Padding(padding: EdgeInsets.only(top: 5)),
@@ -128,7 +128,7 @@ class Profile extends StatelessWidget {
                       children: [
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text('페이지',
-                        style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
+                          style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text('158', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
                         Padding(padding: EdgeInsets.only(top: 5))],)),),
@@ -224,6 +224,8 @@ class Profile extends StatelessWidget {
             ),
           ],
         ),
+      ),
     );
+
   }
 }
