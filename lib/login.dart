@@ -2,6 +2,7 @@ import 'package:bookmap/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
+import 'package:flutter/rendering.dart';
 import 'package:flutterfire_ui/auth.dart';
 
 void main() async{
@@ -46,27 +47,34 @@ class Authentication extends StatelessWidget {
       builder: (context, snapshot){
           if(!snapshot.hasData){
             //로그인을 하지 않은 경우
-          return SignInScreen(
-            showAuthActionSwitch: false,
-            providerConfigs: const[
-              GoogleProviderConfiguration(clientId: '103491580015438144329'),
-            ],
-            headerBuilder: (context, constraints, _) {
-              return Center(
-                child: Container(
-                    padding: EdgeInsets.only(top:50, bottom: 20),
-                    //lib\src\auth\screens\internal\responsive_page.dart 에 크기 조절하는 부분있음.
-                    child: Image.asset('images/logo.png', fit: BoxFit.fitHeight,),
-                  ),
-              );
-            },
-            footerBuilder: (context, _){
-              return const Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Text('최초 로그인 시 북맵 회원가입이 진행됩니다.',
-                style: TextStyle(color: Colors.grey),)
-              );
-            },
+          return Container(
+            color: Color(0xFFFAFAFA),
+            padding: EdgeInsets.only(top: 150),
+            //이렇게 조정하는게 맞나,,,,
+            child: SignInScreen(
+
+              //headerMaxExtent: double.infinity,
+              showAuthActionSwitch: false,
+              providerConfigs: const[
+                GoogleProviderConfiguration(clientId: '103491580015438144329'),
+              ],
+              headerBuilder: (context, constraints, _) {
+                return Center(
+                  child: Container(
+                      margin: const EdgeInsets.only(top:50, bottom: 20),
+                      //lib\src\auth\screens\internal\responsive_page.dart 에 크기 조절하는 부분있음.
+                      child: Image.asset('images/logo.png', fit: BoxFit.fitWidth,),
+                    ),
+                );
+              },
+              footerBuilder: (context, _){
+                return const Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text('최초 로그인 시 북맵 회원가입이 진행됩니다.',
+                  style: TextStyle(color: Colors.grey),)
+                );
+              },
+            ),
           );
           }
           else {
