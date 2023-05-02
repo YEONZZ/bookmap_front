@@ -51,6 +51,7 @@ class Authentication extends StatelessWidget {
           return Container(
             color: Color(0xFFFAFAFA),
             padding: EdgeInsets.only(top: 150),
+
             child: SignInScreen(
               //headerMaxExtent: double.infinity,
               showAuthActionSwitch: false,
