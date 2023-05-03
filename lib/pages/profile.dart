@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:bookmap/design/color.dart';
 import '../login.dart';
+import 'profile_detail.dart';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
@@ -79,7 +80,12 @@ class MyStatelessWidget extends StatelessWidget{
                 const Padding(padding: EdgeInsets.only(left: 25)),
                 Expanded(
                   flex: 5,
-                  child: TextButton(onPressed: (){},
+                  child: TextButton(onPressed: (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Edit())
+                    );
+                  },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(appcolor.shade50),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
