@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:bookmap/design/color.dart';
-import '../login.dart';
-import 'profile_detail.dart';
+import 'package:bookmap/routes/profile_routes.dart';
 
 class Profile extends StatelessWidget {
   const Profile({Key? key}) : super(key: key);
@@ -10,6 +9,7 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     //final _authentication = firebaseauth.FirebaseAuth.instance;
     return MaterialApp(
+      routes: RoutesProfile.routesProfile,
       debugShowCheckedModeBanner: false,
       home: MyStatelessWidget(),
     );
@@ -20,6 +20,8 @@ class Profile extends StatelessWidget {
 class MyStatelessWidget extends StatelessWidget{
   MyStatelessWidget({Key? key}) : super(key: key);
   final _authentication = firebaseauth.FirebaseAuth.instance;
+
+  @override
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
@@ -35,10 +37,7 @@ class MyStatelessWidget extends StatelessWidget{
               ),
               onPressed: (){
                 _authentication.signOut();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginPage())
-                );
+                Navigator.of(context).pushNamed(RoutesProfile.logout);
               }
           )
         ],
@@ -80,12 +79,10 @@ class MyStatelessWidget extends StatelessWidget{
                 const Padding(padding: EdgeInsets.only(left: 25)),
                 Expanded(
                   flex: 5,
-                  child: TextButton(onPressed: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Edit())
-                    );
-                  },
+                  child: TextButton(
+                      onPressed: (){
+                        Navigator.of(context).pushNamed(RoutesProfile.edit);
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(appcolor.shade50),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -95,9 +92,13 @@ class MyStatelessWidget extends StatelessWidget{
                             )),),
                       child: const Text("프로필 편집", style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold),)),),
                 const Expanded(flex: 1,child: Padding(padding: EdgeInsets.only(left: 10)),),
+
                 Expanded(
                   flex: 5,
-                  child: TextButton(onPressed: (){},
+                  child: TextButton(
+                      onPressed: (){
+                        Navigator.of(context).pushNamed(RoutesProfile.setting);
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(appcolor.shade50),
                         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -113,7 +114,9 @@ class MyStatelessWidget extends StatelessWidget{
               const Padding(padding: EdgeInsets.only(left: 25)),
               Expanded(flex: 1,
                   child: TextButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      Navigator.of(context).pushNamed(RoutesProfile.calendar);
+                    },
                     style: TextButton.styleFrom(
                         shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
                           borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),),
@@ -136,7 +139,7 @@ class MyStatelessWidget extends StatelessWidget{
                         Text('페이지',
                           style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
                         Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('158', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
+                        Text('138', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
                         Padding(padding: EdgeInsets.only(top: 5))],)),),
               Expanded(flex: 1,
                 child: TextButton(onPressed: (){},
@@ -147,7 +150,7 @@ class MyStatelessWidget extends StatelessWidget{
                         Padding(padding: EdgeInsets.only(top: 5)),
                         Text('일', style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
                         Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('6', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
+                        Text('3', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
                         Padding(padding: EdgeInsets.only(top: 5))],)),),
               const Padding(padding: EdgeInsets.only(right: 25)),
             ],
