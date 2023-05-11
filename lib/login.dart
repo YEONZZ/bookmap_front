@@ -84,5 +84,4 @@ class Authentication extends StatelessWidget {
     );
   }
 
-
 }
