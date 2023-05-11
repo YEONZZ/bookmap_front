@@ -1,4 +1,5 @@
 import 'package:bookmap/pages/library.dart';
+import 'package:bookmap/pages/search_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,8 +15,6 @@ class Search extends StatelessWidget {
 }
 
 class HttpApp extends StatefulWidget {
-  final List<String> list = List.generate(10, (index) => "Text $index");
-
   @override
   State<StatefulWidget> createState() => _HttpApp();
 }
@@ -38,7 +37,6 @@ class _HttpApp extends State<HttpApp> {
       if (_scrollController!.offset >=
               _scrollController!.position.maxScrollExtent &&
           !_scrollController!.position.outOfRange) {
-        print('bottom');
         page++;
         getJSONData();
       }
@@ -77,12 +75,6 @@ class _HttpApp extends State<HttpApp> {
                   setState(() {});
                 },
               ),
-              // leading: IconButton(
-              //   icon: Icon(Icons.arrow_back),
-              //   onPressed: () {
-              //     Navigator.pop(context);
-              //   },
-              // ),
               bottom: TabBar(
                 indicatorColor: Colors.white,
                 tabs: [Tab(text: '도서'), Tab(text: '북맵')],
@@ -120,56 +112,64 @@ class _HttpApp extends State<HttpApp> {
                           )
                         : ListView.builder(
                             itemBuilder: (context, index) {
-                              return Card(
-                                child: Container(
-                                  child: Row(
-                                    children: <Widget>[
-                                      Image.network(data![index]['thumbnail'],
-                                          height: 120,
-                                          width: 120,
-                                          fit: BoxFit.contain,
-                                          errorBuilder: (
-                                          BuildContext context, Object exception, StackTrace? stackTrace) {
-                                        return Padding(
-                                          padding: const EdgeInsets.all(30),
-                                          child: const Text('이미지없음', textAlign: TextAlign.center),
-                                        );
-                                      } // 대체 이미지를 반환
-                                          ),
-                                      Column(
-                                        children: <Widget>[
-                                          Container(
-                                            margin: EdgeInsets.all(10),
-                                            width: MediaQuery.of(context).size.width - 150,
-                                            child: Text(
-                                              data![index]['title'].toString(),
-                                              style: TextStyle(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.bold),
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.ellipsis,
+                              return GestureDetector(
+                                onTap: (){
+                                  Navigator.push (
+                                    context,
+                                    MaterialPageRoute(builder: (context) => SearchDetailPage(data: data![index])),
+                                  );
+                                },
+                                child: Card(
+                                  child: Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        Image.network(data![index]['thumbnail'],
+                                            height: 120,
+                                            width: 120,
+                                            fit: BoxFit.contain,
+                                            errorBuilder: (
+                                            BuildContext context, Object exception, StackTrace? stackTrace) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(30),
+                                            child: const Text('이미지없음', textAlign: TextAlign.center),
+                                          );
+                                        } // 대체 이미지를 반환
                                             ),
-                                          ),
-                                         Container(
-                                              margin: EdgeInsets.only(bottom: 10),
+                                        Column(
+                                          children: <Widget>[
+                                            Container(
+                                              margin: EdgeInsets.all(10),
                                               width: MediaQuery.of(context).size.width - 150,
                                               child: Text(
-                                                  '저자 : ${data![index]['authors'].join(', ')}',
-                                                  overflow: TextOverflow.ellipsis,
-                                                  textAlign: TextAlign.center)),
-                                          Container(
-                                            margin: EdgeInsets.only(bottom: 20),
-                                            width: MediaQuery.of(context).size.width - 150,
-                                            child: Text(
-                                                data![index]['contents'].toString(),
-                                                style: TextStyle(fontSize: 14),
-                                                maxLines: 3,
-                                                overflow: TextOverflow.ellipsis),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                data![index]['title'].toString(),
+                                                style: TextStyle(
+                                                    fontSize: 17,
+                                                    fontWeight: FontWeight.bold),
+                                                textAlign: TextAlign.center,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                           Container(
+                                                margin: EdgeInsets.only(bottom: 10),
+                                                width: MediaQuery.of(context).size.width - 150,
+                                                child: Text(
+                                                    '저자 : ${data![index]['authors'].join(', ')}',
+                                                    overflow: TextOverflow.ellipsis,
+                                                    textAlign: TextAlign.center)),
+                                            Container(
+                                              margin: EdgeInsets.only(bottom: 20),
+                                              width: MediaQuery.of(context).size.width - 150,
+                                              child: Text(
+                                                  data![index]['contents'].toString(),
+                                                  style: TextStyle(fontSize: 14),
+                                                  maxLines: 3,
+                                                  overflow: TextOverflow.ellipsis),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                    ),
                                   ),
                                 ),
                               );
