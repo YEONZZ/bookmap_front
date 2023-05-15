@@ -76,7 +76,46 @@ class _FirstPage extends State<FirstPage> {
         ),
       body: TabBarView(
         children: [
-          Text("전체"),
+          Column(
+            children: [
+              GestureDetector(
+                onTap: (){
+                  //눌렀을 때 옵션
+                },
+                child: Container(
+                  margin: EdgeInsets.only(top: 10),
+                  width: MediaQuery.of(context).size.width-20,
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  color: appcolor.shade50,
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.only(left: 10, right: 10),
+                        child: Image.network(
+                            'https://search.pstatic.net/common/?src=https%3A%2F%2Fshopping-phinf.pstatic.net%2Fmain_3245601%2F32456019705.20230425164119.jpg&type=w276',
+                            width: 90,
+                            height: 120,
+                            fit: BoxFit.fill),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('천개의 파랑', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.start),
+                            Text('지은이: 천선란 ', textAlign: TextAlign.start, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w100)),
+                            Text('⭐⭐⭐⭐⭐', textAlign: TextAlign.start, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w100)),
+                            Text('시작일: 2023-04-29 완독일: 2023-05-01', textAlign: TextAlign.start, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w100))
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
           Text("읽은 책"),
           Text("읽고 있는 책"),
           Text("읽고싶은"),
