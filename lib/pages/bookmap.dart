@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/material.dart';
+import 'bookmap_example.dart';
 import 'search.dart';
 import 'profile.dart';
 import 'package:bookmap/design/color.dart';
@@ -155,22 +156,28 @@ class SampleList extends StatelessWidget{
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Padding(
-              padding: const EdgeInsets.only(left: 25, right: 25, top: 20, bottom: 20),
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
               child: Column(
                 children: [
                   InkWell(
                     onTap: (){
-                      Text("클릭");
+                      Navigator.push (
+                        context,
+                        MaterialPageRoute(builder: (context) => BookmapEx()),
+                      );
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
-                      color: appcolor.shade50,
+                      decoration: BoxDecoration(
+                        color: appcolor.shade50,
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                      ),
                       child: Row(
                         children: <Widget>[
-                          Image.network('https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA2MDNfMTE3%2FMDAxNjU0MjEzOTU0MjM5.ZpVsQpWT6GyTDEhRTrFvFPn94_ehzw_nIyhuIkgRFIgg.kgBLPcRZFwZPIrpU_SxZd7udlJUq7DifwNK1WHdFf5Eg.JPEG.javida%2F92F90D0C-26EF-49B2-BA3D-87F4F53716F7.jpeg&type=sc960_832',
+                          Image.network('https://shopping-phinf.pstatic.net/main_3839015/38390159619.20230502161943.jpg?type=w300',
                               height: 80,
                               width: 80,
-                              fit: BoxFit.fill),
+                              fit: BoxFit.cover),
                           Padding(padding: EdgeInsets.only(right: 10)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +185,7 @@ class SampleList extends StatelessWidget{
                               Text('여행가고 싶은 곳들', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.start),
                               Text(''),
-                              Text('가고 싶은 여행지에 대한 책들을 담은 북맵\n이탈리아, 아프리카, 스위스 관련 책', textAlign: TextAlign.start, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w100))
+                              Text('가고 싶은 여행지에 대한 책들을 담은 북맵\n제주도, 이탈리아, 아프리카 등등', textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
                             ],
                           )
                         ],
@@ -194,13 +201,16 @@ class SampleList extends StatelessWidget{
                     },
                     child: Container(
                       padding: EdgeInsets.all(10),
-                      color: appcolor.shade50,
+                      decoration: BoxDecoration(
+                        color: appcolor.shade50,
+                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                      ),
                       child: Row(
                         children: <Widget>[
-                          Image.network('https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA4MDFfNDkg%2FMDAxNjU5MzI3NDEzOTc5.Pq9p6L6WOE8sPiulrDGRhYAzyX7rXSFehaWNgSnIpgog.oXYs2_jkhSTSx5BIXA3Bw_TQSV65pUzQ9t7VwJKwRwUg.PNG.darks754%2F20220720_130458.png&type=sc960_832',
+                          Image.network('https://shopping-phinf.pstatic.net/main_3248510/32485101755.20221227203600.jpg?type=w300',
                               height: 80,
                               width: 80,
-                              fit: BoxFit.fill),
+                              fit: BoxFit.cover),
                           Padding(padding: EdgeInsets.only(right: 10)),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,7 +218,7 @@ class SampleList extends StatelessWidget{
                               Text('CS 공부', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.start),
                               Text(''),
-                              Text('CS 관련 도서\n이산수학, 선형대수, 알고리즘, 인공지능', textAlign: TextAlign.start, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w100))
+                              Text('CS 관련 도서\n이산수학, 선형대수, 알고리즘, 인공지능', textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
                             ],
                           )
                         ],

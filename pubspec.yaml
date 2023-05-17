@@ -9,14 +9,15 @@ environment:
 
 dependencies:
   table_calendar: ^3.0.9
-
   flutter:
     sdk: flutter
   cached_network_image: ^3.0.0
-
+  percent_indicator: ^4.0.1
+  intl: ^0.18.0
+  carousel_slider: ^4.2.1
 
   cupertino_icons: ^1.0.2
-  http: ^0.13.3
+  http: ^0.13.4
   firebase_auth: ^4.1.2
   firebase_core: ^2.2.0
   flutterfire_ui: ^0.4.3+20
@@ -30,6 +31,7 @@ dev_dependencies:
 flutter_native_splash:
   color: "#ffffff" #white
   image: assets/splash.png
+  fullscreen: true
 
 flutter:
   uses-material-design: true

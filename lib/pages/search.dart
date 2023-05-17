@@ -138,22 +138,23 @@ class _HttpApp extends State<HttpApp> {
                                         Column(
                                           children: <Widget>[
                                             Container(
-                                              margin: EdgeInsets.all(10),
+                                              margin: EdgeInsets.all(8),
                                               width: MediaQuery.of(context).size.width - 150,
                                               child: Text(
                                                 data![index]['title'].toString(),
                                                 style: TextStyle(
-                                                    fontSize: 17,
+                                                    fontSize: 15,
                                                     fontWeight: FontWeight.bold),
                                                 textAlign: TextAlign.center,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                            Container(
-                                                margin: EdgeInsets.only(bottom: 10),
+                                                margin: EdgeInsets.only(bottom: 8),
                                                 width: MediaQuery.of(context).size.width - 150,
                                                 child: Text(
                                                     '저자 : ${data![index]['authors'].join(', ')}',
+                                                    style: TextStyle(color: Colors.black45, fontSize: 13),
                                                     overflow: TextOverflow.ellipsis,
                                                     textAlign: TextAlign.center)),
                                             Container(
@@ -161,7 +162,7 @@ class _HttpApp extends State<HttpApp> {
                                               width: MediaQuery.of(context).size.width - 150,
                                               child: Text(
                                                   data![index]['contents'].toString(),
-                                                  style: TextStyle(fontSize: 14),
+                                                  style: TextStyle(fontSize: 12, color: Colors.black38),
                                                   maxLines: 3,
                                                   overflow: TextOverflow.ellipsis),
                                             ),

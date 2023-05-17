@@ -57,108 +57,77 @@ class MyStatelessWidget extends StatelessWidget{
                         child: Text('${_authentication.currentUser?.displayName}',
                             style: const TextStyle(color: Colors.black, fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold,)),),
                       const Padding(
-                          padding: EdgeInsets.only(left: 25, top: 10, bottom: 15),
-                          child: Text('상태메시지-db작업 필요', style: TextStyle(color: Colors.black, fontSize: 12),))
+                          padding: EdgeInsets.only(left: 25, top: 10, bottom: 5),
+                          child: Text('My favorite book: <나미야 잡화점의 기적>', style: TextStyle(color: Colors.black54, fontSize: 12),))
                     ],
                   ),
                 ),
                 Expanded(
                   flex: 1,
-                  child: CircleAvatar(
-                    radius: 23,
-                    child: Image.network('${_authentication.currentUser?.photoURL}',),
+                  child: Column(
+                    children: [
+                      Padding(padding: EdgeInsets.only(top:10)),
+                      CircleAvatar(
+                        radius: 25,
+                        child: Image.network('${_authentication.currentUser?.photoURL}'),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
 
-            //Body: 편집 버튼
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Padding(padding: EdgeInsets.only(left: 25)),
-                Expanded(
-                  flex: 5,
-                  child: TextButton(
-                      onPressed: (){
-                        Navigator.of(context).pushNamed(RoutesProfile.edit);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(appcolor.shade50),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                side: BorderSide(color: appcolor.shade50)
-                            )),),
-                      child: const Text("프로필 편집", style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold),)),),
-                const Expanded(flex: 1,child: Padding(padding: EdgeInsets.only(left: 10)),),
-
-                Expanded(
-                  flex: 5,
-                  child: TextButton(
-                      onPressed: (){
-                        Navigator.of(context).pushNamed(RoutesProfile.setting);
-                      },
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(appcolor.shade50),
-                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                side: BorderSide(color: appcolor.shade50))),),
-                      child: const Text("앱 설정", style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold),)),),
-                const Padding(padding: EdgeInsets.only(left: 25)),],
-            ),
-            const Padding(padding: EdgeInsets.only(top: 15)),
+            const Padding(padding: EdgeInsets.only(top: 5)),
             //독서기록 버튼2
             Row(children: [
               const Padding(padding: EdgeInsets.only(left: 25)),
-              Expanded(flex: 1,
-                  child: TextButton(
+              Expanded(
+                flex: 1,
+                child: TextButton(
+                    onPressed: (){
+                      Navigator.of(context).pushNamed(RoutesProfile.edit);
+                    },
+                    style: TextButton.styleFrom(
+                        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                        backgroundColor: Colors.white),
+                    child: Column(
+                      children: [
+                        Padding(padding: EdgeInsets.only(top: 5)),
+                        Text('프로필 편집', style: TextStyle(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold),),
+                        Padding(padding: EdgeInsets.only(top: 5))],)),
+              ),
+              const Padding(padding: EdgeInsets.only(left: 25)),
+              Expanded(
+                flex: 1,
+                child: TextButton(
                     onPressed: (){
                       Navigator.of(context).pushNamed(RoutesProfile.calendar);
                     },
                     style: TextButton.styleFrom(
                         shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
-                          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),),
                         backgroundColor: Colors.white),
                     child: Column(
                       children: [
                         Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('완독', style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
-                        Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('2', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
-                        Padding(padding: EdgeInsets.only(top: 5))],),)),
-              Expanded(flex: 1,
-                child: TextButton(onPressed: (){},
-                    style: TextButton.styleFrom(
-                        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26), borderRadius: BorderRadius.all(Radius.circular(0))),
-                        backgroundColor: Colors.white),
-                    child: Column(
-                      children: [
-                        Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('페이지',
-                          style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
-                        Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('138', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
-                        Padding(padding: EdgeInsets.only(top: 5))],)),),
-              Expanded(flex: 1,
-                child: TextButton(onPressed: (){},
-                    style: TextButton.styleFrom(backgroundColor: Colors.white,
-                        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26), borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10)),)),
-                    child: Column(
-                      children: [
-                        Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('일', style: TextStyle(color: Colors.black38, fontSize: 11, fontWeight: FontWeight.bold),),
-                        Padding(padding: EdgeInsets.only(top: 5)),
-                        Text('3', style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),),
-                        Padding(padding: EdgeInsets.only(top: 5))],)),),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('완독', style: TextStyle(color: Colors.black38, fontSize: 12, fontWeight: FontWeight.bold),),
+                            Padding(padding: EdgeInsets.only(left: 10)),
+                            Text('2', style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),),
+                          ],
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 5))],)),
+              ),
               const Padding(padding: EdgeInsets.only(right: 25)),
             ],
             ),
             Container(
               padding: const EdgeInsets.only(left: 25, right: 25, top: 5),
               alignment: Alignment.centerLeft,
-              child: const Text('최근 1개월동안의 독서기록 요약입니다.',
+              child: const Text('※ 완독 수는 월별로 초기화됩니다.',
                 style: TextStyle(color: Colors.black38, fontWeight: FontWeight.normal, fontSize: 11),
                 textAlign: TextAlign.left,),
             ),
@@ -202,7 +171,7 @@ class MyStatelessWidget extends StatelessWidget{
                 child: const Text('도움말', style: TextStyle(fontSize: 15, color: Colors.black38, fontWeight: FontWeight.bold),)),
 
             Container(
-              padding: const EdgeInsets.only(left: 19, right: 19, top: 5),
+              padding: const EdgeInsets.only(left: 19, right: 19, top: 10),
               width: double.infinity,
               child: TextButton(onPressed:(){},
                   child: Align(
