@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Search extends StatelessWidget {
+
+  //Search({required this.screens});
+  //final List<Widget> screens;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -20,7 +23,7 @@ class HttpApp extends StatefulWidget {
 }
 
 class _HttpApp extends State<HttpApp> {
-  String result = '';
+  String reData = '';
   TextEditingController? _editingController;
   ScrollController? _scrollController;
   static List? data;
@@ -30,18 +33,22 @@ class _HttpApp extends State<HttpApp> {
   @override
   void initState() {
     super.initState();
-    data = new List.empty(growable: true);
+    if (data == null) {
+      data = new List.empty(growable: true);
+    }
+    //print(reData); //아직 아무것도 찍히지않음
     _editingController = new TextEditingController();
     _scrollController = new ScrollController();
     _scrollController!.addListener(() {
       if (_scrollController!.offset >=
-              _scrollController!.position.maxScrollExtent &&
+          _scrollController!.position.maxScrollExtent &&
           !_scrollController!.position.outOfRange) {
         page++;
         getJSONData();
       }
     });
   }
+
   bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
@@ -113,11 +120,15 @@ class _HttpApp extends State<HttpApp> {
                         : ListView.builder(
                             itemBuilder: (context, index) {
                               return GestureDetector(
-                                onTap: (){
-                                  Navigator.push (
+                                onTap: () async {
+                                   final searchResult = await Navigator.push (
                                     context,
                                     MaterialPageRoute(builder: (context) => SearchDetailPage(data: data![index])),
                                   );
+                                   
+                                   setState(() {
+                                     reData = searchResult; //SearchDetailPage값 가져오기
+                                   });
                                 },
                                 child: Card(
                                   child: Container(
