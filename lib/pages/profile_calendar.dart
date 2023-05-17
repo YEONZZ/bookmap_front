@@ -50,7 +50,7 @@ class _Calendar extends State<Calendar>{
   @override
   Widget build(BuildContext context) {
     return TableCalendar(focusedDay: DateTime.now(),
-      firstDay: DateTime.utc(2023,5,1),
+      firstDay: DateTime.utc(2023,1,1),
       lastDay: DateTime.utc(2023,12,31),
       //locale: 'ko_KR',
       //daysOfWeekHeight: 30,
@@ -65,7 +65,7 @@ class _Calendar extends State<Calendar>{
         titleCentered: true,
       ),
       eventLoader: (day){
-      if(day.day%10==0){
+      if(day.day%15==0){
         return['hi'];
       }
       else
@@ -85,18 +85,19 @@ class SumUp extends StatelessWidget{
         Container(
           padding: EdgeInsets.all(10),
           margin: EdgeInsets.all(10),
-          color: appcolor.shade50,
+          decoration: BoxDecoration(
+            color: appcolor.shade50,
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
           child: Row(
             children: [
-              Image.network('https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA4MDFfNDkg%2FMDAxNjU5MzI3NDEzOTc5.Pq9p6L6WOE8sPiulrDGRhYAzyX7rXSFehaWNgSnIpgog.oXYs2_jkhSTSx5BIXA3Bw_TQSV65pUzQ9t7VwJKwRwUg.PNG.darks754%2F20220720_130458.png&type=sc960_832',
-                  height: 80,
-                  width: 80,
-                  fit: BoxFit.fill),
-              Padding(padding: EdgeInsets.only(left:10),),
-              Image.network('https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA2MDNfMTE3%2FMDAxNjU0MjEzOTU0MjM5.ZpVsQpWT6GyTDEhRTrFvFPn94_ehzw_nIyhuIkgRFIgg.kgBLPcRZFwZPIrpU_SxZd7udlJUq7DifwNK1WHdFf5Eg.JPEG.javida%2F92F90D0C-26EF-49B2-BA3D-87F4F53716F7.jpeg&type=sc960_832',
-                  height: 80,
-                  width: 80,
-                  fit: BoxFit.fill)
+              Image.network('https://shopping-phinf.pstatic.net/main_3830325/38303250623.20230509165417.jpg?type=w300',
+                  height: 100,
+                  fit: BoxFit.fitHeight),
+              Padding(padding: EdgeInsets.only(left:15),),
+              Image.network('https://shopping-phinf.pstatic.net/main_3246631/32466315260.20230131162954.jpg?type=w300',
+                  height: 100,
+                  fit: BoxFit.fitHeight)
             ],
           ),
         ),
@@ -126,38 +127,6 @@ class SumUp extends StatelessWidget{
                   ],
                 ),
               )),
-        Container(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-            width: double.infinity,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('읽은 페이지 수  ', style: TextStyle(color: Colors.black38, fontWeight: FontWeight.normal, fontSize: 13),
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 5)),
-                  const Text('138p', style: TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            )),
-        Container(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-            width: double.infinity,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Row(
-                //crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('읽은 일 수  ', style: TextStyle(color: Colors.black38, fontWeight: FontWeight.normal, fontSize: 13),
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 5)),
-                  const Text('3일', style: TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            )),
       ],
     );
   }
