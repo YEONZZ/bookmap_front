@@ -40,7 +40,7 @@ class AppSetting extends State<Setting>{
                   _authentication.signOut();
                   Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage())
+                      MaterialPageRoute(builder: (context) => Login())
                   );
                 }
             )

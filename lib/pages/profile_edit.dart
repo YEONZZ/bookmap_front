@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import '../login.dart';
 import 'package:bookmap/design/color.dart';
 
+
 class Edit extends StatelessWidget{
   const Edit({super.key});
 
@@ -38,7 +39,7 @@ class ProfileEdit extends StatelessWidget{
                 _authentication.signOut();
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LoginPage())
+                    MaterialPageRoute(builder: (context) => Login())
                 );
               }
           )
