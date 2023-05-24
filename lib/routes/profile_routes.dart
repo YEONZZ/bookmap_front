@@ -13,7 +13,7 @@ class RoutesProfile{
   static const String calendar = '/calendar';
 
   static final routesProfile = <String, WidgetBuilder>{
-    logout: (BuildContext context) => LoginPage(),
+    logout: (BuildContext context) => Login(),
     edit: (BuildContext context) => Edit(),
     setting: (BuildContext context) => Setting(),
     calendar: (BuildContext context) => MyCalendar()
