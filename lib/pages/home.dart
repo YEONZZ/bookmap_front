@@ -1,3 +1,4 @@
+import 'package:bookmap/pages/search.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import '../design/color.dart';
@@ -47,27 +48,38 @@ class HomeStatelessWidget extends StatelessWidget{
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                  ),
-                  child: TextField(
-                    cursorColor: appcolor.shade700,
-                    keyboardType: TextInputType.text,
-                    onChanged: (text){
-                      //_streamSearch.add(text);
-                    },
-                    decoration: InputDecoration(
-                      hintText: '책이름/저자/ISBN',
-                      border: InputBorder.none,
-                      icon: Padding(
-                        padding: EdgeInsets.only(left: 13),
-                        child: Icon(Icons.search, color: appcolor.shade700,)),
-                      )
+              GestureDetector(
+                onTap: () async{
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Search(),
                     ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: TextField(
+                      enabled: false, //텍스트필드 입력불가
+                      cursorColor: appcolor.shade700,
+                      keyboardType: TextInputType.text,
+                      onChanged: (text){
+                        //_streamSearch.add(text);
+                      },
+                      decoration: InputDecoration(
+                        hintText: '책이름/저자/ISBN',
+                        border: InputBorder.none,
+                        icon: Padding(
+                          padding: EdgeInsets.only(left: 13),
+                          child: Icon(Icons.search, color: appcolor.shade700,)),
+                        )
+                      ),
+                  ),
                 ),
               ),
               Padding(
