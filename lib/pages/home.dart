@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:bookmap/pages/search.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import '../design/color.dart';
 import 'package:bookmap/api_key.dart';
 import '../main.dart';
@@ -42,7 +41,6 @@ class Home extends StatelessWidget {
 }
 
 class HomeStatelessWidget extends StatelessWidget{
-  final _authentication = firebaseauth.FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,7 +179,7 @@ class HomeStatelessWidget extends StatelessWidget{
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 12),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 24),
                 child: Row(
                   children: [
                     Expanded(
