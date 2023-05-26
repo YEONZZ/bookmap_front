@@ -172,56 +172,6 @@ class _FirstPage extends State<FirstPage> {
                 } else {
                   return CircularProgressIndicator();}
               },
-            Column(
-              children: [
-                GestureDetector(
-                  onTap: (){
-                    //눌렀을 때 옵션
-                  },
-                  child: Column(
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(top: 10),
-                        width: MediaQuery.of(context).size.width-20,
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        decoration: BoxDecoration(
-                          color: appcolor.shade50,
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-                              margin: EdgeInsets.only(left: 10, right: 10),
-                              child: Image.network(
-                                  'https://search.pstatic.net/common/?src=https%3A%2F%2Fshopping-phinf.pstatic.net%2Fmain_3245601%2F32456019705.20230425164119.jpg&type=w276',
-                                  width: 90,
-                                  height: 120,
-                                  fit: BoxFit.fitHeight),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width*0.6,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text('천개의 파랑', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                      textAlign: TextAlign.start),
-                                  Padding(padding: EdgeInsets.only(top: 5)),
-                                  Text('천선란 ', textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 13, fontWeight: FontWeight.w100)),
-                                  Padding(padding: EdgeInsets.only(top: 15)),
-                                  Text('⭐⭐⭐⭐⭐', textAlign: TextAlign.start, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w100)),
-                                  Padding(padding: EdgeInsets.only(top: 5)),
-                                  Text('시작일: 2023-04-29        완독일: 2023-05-01', textAlign: TextAlign.start, style: TextStyle(color: Colors.black54, fontSize: 11, fontWeight: FontWeight.w100))
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
             ),
             Text("읽은 책"),
             Text("읽고 있는 책"),
