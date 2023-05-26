@@ -80,6 +80,19 @@ class _HttpApp extends State<HttpApp> {
                           ),
                         ),
                         textInputAction: TextInputAction.search,
+                        onEditingComplete: () async {
+                          FocusScope.of(context).unfocus();
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          page = 1;
+                          data!.clear();
+                          await getJSONData();
+
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        },
                         onChanged: (text) {
                           setState(() {
                             searchQuery = text; // 검색어 업데이트
