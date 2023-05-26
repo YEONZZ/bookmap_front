@@ -60,6 +60,7 @@ class _HttpApp extends State<HttpApp> {
             appBar: AppBar(
               backgroundColor: appcolor,
               title: Container(
+                margin: EdgeInsets.only(top: 10, bottom: 5),
                 decoration: BoxDecoration(
                   color: Colors.grey.shade200,
                   borderRadius: BorderRadius.all(Radius.circular(16)),
