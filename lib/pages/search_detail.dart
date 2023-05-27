@@ -2,7 +2,6 @@ import 'package:bookmap/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:bookmap/design/color.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:flutter/scheduler.dart' show TickerProviderStateMixin;
 
 class SearchDetailPage extends StatelessWidget {
   final dynamic data;
@@ -30,7 +29,7 @@ class SearchDetail extends StatefulWidget {
 }
 
 
-class _SearchDetail extends State<SearchDetail> with TickerProviderStateMixin {
+class _SearchDetail extends State<SearchDetail> {
   late final dynamic data;
 
   @override
