@@ -107,20 +107,35 @@ Future<String> _postData() async {
   //   'scope': 'email',
   // });
 
-  var response = await http.post(Uri.parse(tmdbApiKey + '/usertest'),
-      headers: {
+  var response = await http.post(Uri.parse(logApiKey + '/oauth/jwt/google'),
+      headers: <String, String>{
         'client_id': googleClientId,
         'redirect_uri': '$callbackUrlScheme:/',
         'grant_type': 'authorization_code',
         'Content-Type': 'application/json',
+        'charset' : 'utf-8',
+        "email": '${_authentication.currentUser?.email}',
+        "provider": 'google.com',
+        "providerId": '${_authentication.currentUser?.uid}',
+        "picture": '${_authentication.currentUser?.photoURL}'
       },
       body: jsonEncode({
-        //이후 사용자의 사용에 따라 status와
-        "nickname": _authentication.currentUser?.displayName,
-        "providerId": _authentication.currentUser?.uid,
-        "photo": _authentication.currentUser?.photoURL,
+        "getEmail": '${_authentication.currentUser?.email}',
+        "getProvider": 'google.com',
+        "getProviderId": '${_authentication.currentUser?.uid}',
+        "getPicture": '${_authentication.currentUser?.photoURL}'
       })
   );
   return response.body;
 }
 
+
+// Future<String> join([String separator = ""]) async{
+//   final _authentication = firebaseauth.FirebaseAuth.instance;
+//   var userdata= {
+//     _authentication.currentUser?.displayName,
+//     _authentication.currentUser?.uid,
+//     _authentication.currentUser?.photoURL,
+//   };
+//   return await userdata.toList().join(separator);
+// }
