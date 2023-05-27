@@ -38,8 +38,6 @@ flutter:
   uses-material-design: true
   assets:
     - images/logo.png
-    - images/btn_google_signin_light_focus_web@2x.png
-    - images/btn_google_signin_light_normal_web@2x.png
 
 fading_image_button: ^0.10.0+0
 
