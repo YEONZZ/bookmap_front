@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookmap/pages/search.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -103,7 +104,7 @@ class HomeStatelessWidget extends StatelessWidget{
                   ],
                 ),
               ),
-              Padding(
+              Padding( //서재 컨테이너 화면
                 padding: const EdgeInsets.only(left: 12, right: 12, top: 0),
                 child: Container(
                   decoration: BoxDecoration(
@@ -122,14 +123,29 @@ class HomeStatelessWidget extends StatelessWidget{
                             return Row(
                               children: imageUrl.map((data) {
                                 dynamic img = data;
-                                return Container(
-                                  margin: EdgeInsets.only(left: 10, right: 10),
-                                  child: Image.network(
-                                    img['bookImageDto'][0]['image'],
-                                    width: 90,
-                                    height: 120,
-                                    fit: BoxFit.fitHeight,
-                                  ),
+                                List<dynamic> imageDatas = img['bookImageDto'];
+                                return Row(
+                                  children: imageDatas.sublist(0, 4).map((imageData) {
+                                    return Container(
+                                      margin: EdgeInsets.only(left: 10, right: 10),
+                                      child: GestureDetector(
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => SearchDetailGetPage(),
+                                            ),
+                                          );
+                                        },
+                                        child: Image.network(
+                                          imageData['image'],
+                                          width: 90,
+                                          height: 120,
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                                 );
                               }).toList(),
                             );
