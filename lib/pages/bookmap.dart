@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/material.dart';
 import 'bookmap_example.dart';
+import 'makingBookMap.dart';
 import 'search.dart';
-import 'profile.dart';
 import 'package:bookmap/design/color.dart';
 
 void main() {
@@ -24,7 +24,7 @@ class BookMap extends StatelessWidget {
       initialRoute: '/',
       routes: {'/': (context) => BookMapList(),
         '/search': (context) => Search(),
-        '/profile':(context) => Profile()
+        '/new':(context) => MakingBookMap()
       });}}
 
 class BookMapList extends StatefulWidget {
@@ -44,8 +44,8 @@ class _BookMapList extends State<BookMapList> {
             style: const TextStyle(color: Colors.black, fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold,)),
             actions: <Widget>[
               IconButton(onPressed: (){
-                Navigator.of(context).pushNamed('/profile');
-                }, icon: Icon(Icons.person_rounded))],
+                Navigator.of(context).pushNamed('/new');
+                }, icon: Icon(Icons.add))],
             bottom: TabBar(
               tabs: [
                 Tab(text: "마이 북맵"),
