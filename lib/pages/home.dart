@@ -1,6 +1,11 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:bookmap/pages/search.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import '../design/color.dart';
+import 'package:bookmap/api_key.dart';
+import '../main.dart';
 
 final imageList = [
   Image.network(
@@ -12,6 +17,8 @@ final imageList = [
 ];
 
 void main() {
+  http.Client client = http.Client();
+  http.Client().close();
   runApp(Home());
 }
 
@@ -22,12 +29,12 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: _title,
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primarySwatch: appcolor,
-        ),
+      title: _title,
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primarySwatch: appcolor,
+      ),
       home: HomeStatelessWidget(),
     );
   }
@@ -47,27 +54,38 @@ class HomeStatelessWidget extends StatelessWidget{
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.all(Radius.circular(16)),
-                  ),
-                  child: TextField(
-                    cursorColor: appcolor.shade700,
-                    keyboardType: TextInputType.text,
-                    onChanged: (text){
-                      //_streamSearch.add(text);
-                    },
-                    decoration: InputDecoration(
-                      hintText: '책이름/저자/ISBN',
-                      border: InputBorder.none,
-                      icon: Padding(
-                        padding: EdgeInsets.only(left: 13),
-                        child: Icon(Icons.search, color: appcolor.shade700,)),
-                      )
+              GestureDetector(
+                onTap: () async{
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Search(),
                     ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    ),
+                    child: TextField(
+                        enabled: false,
+                        cursorColor: appcolor.shade700,
+                        keyboardType: TextInputType.text,
+                        onChanged: (text){
+                          //_streamSearch.add(text);
+                        },
+                        decoration: InputDecoration(
+                          hintText: '책이름/저자/ISBN',
+                          border: InputBorder.none,
+                          icon: Padding(
+                              padding: EdgeInsets.only(left: 13),
+                              child: Icon(Icons.search, color: appcolor.shade700,)),
+                        )
+                    ),
+                  ),
                 ),
               ),
               Padding(
@@ -86,7 +104,7 @@ class HomeStatelessWidget extends StatelessWidget{
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, top:0),
+                padding: const EdgeInsets.only(left: 12, right: 12, top: 0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: appcolor.shade50,
@@ -96,46 +114,34 @@ class HomeStatelessWidget extends StatelessWidget{
                   height: MediaQuery.of(context).size.height * 0.2,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: Image.network(
-                              'https://shopping-phinf.pstatic.net/main_3839015/38390159619.20230502161943.jpg?type=w300',
-                              width: 90,
-                              height: 120,
-                              fit: BoxFit.fitHeight),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: Image.network(
-                              'https://shopping-phinf.pstatic.net/main_3249189/32491898723.20221019101316.jpg?type=w300',
-                              width: 90,
-                              height: 120,
-                              fit: BoxFit.fitHeight),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: Image.network(
-                              'https://shopping-phinf.pstatic.net/main_3246667/32466672176.20221229074149.jpg?type=w300',
-                              width: 90,
-                              height: 120,
-                              fit: BoxFit.fitHeight),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(left: 10, right: 10),
-                          child: Image.network(
-                              'https://shopping-phinf.pstatic.net/main_3818761/38187614626.20230404162233.jpg?type=w300',
-                              width: 90,
-                              height: 120,
-                              fit: BoxFit.fitHeight),
-                        ),
-                      ],
-                    ),
+                    child: FutureBuilder<List<Map<String, dynamic>>>(
+                        future: _fetchData(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            List<Map<String, dynamic>> imageUrl = snapshot.data!;
+                            return Row(
+                              children: imageUrl.map((data) {
+                                dynamic img = data;
+                                return Container(
+                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  child: Image.network(
+                                    img['bookImageDto'][0]['image'],
+                                    width: 90,
+                                    height: 120,
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return CircularProgressIndicator();
+                          }
+                        }),
                   ),
                 ),
               ),
-
               //북맵
               Padding(
                 padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 20),
@@ -167,7 +173,7 @@ class HomeStatelessWidget extends StatelessWidget{
                             child: image,
                           ),
                         );
-                        },
+                      },
                     );
                   }).toList(),
                 ),
@@ -204,10 +210,10 @@ class HomeStatelessWidget extends StatelessWidget{
                           Expanded(
                             flex: 1,
                             child: Image.network(
-                                  'https://shopping-phinf.pstatic.net/main_3731353/37313533623.20230516164633.jpg?type=w300',
-                                  width: 90,
-                                  height: 120,
-                                  fit: BoxFit.fitHeight),
+                                'https://shopping-phinf.pstatic.net/main_3731353/37313533623.20230516164633.jpg?type=w300',
+                                width: 90,
+                                height: 120,
+                                fit: BoxFit.fitHeight),
                           ),
                           Expanded(
                             flex: 2,
@@ -255,4 +261,15 @@ class HomeStatelessWidget extends StatelessWidget{
     );
   }
 
+}
+
+Future<List<Map<String, dynamic>>> _fetchData() async {
+  http.Client client = http.Client();
+
+  final response = await client.get(Uri.parse(tmdbApiKey + '/main/4'));
+  var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+  List<Map<String, dynamic>> listData = [data]; // data를 리스트로 감싸기
+
+  return listData;
 }
