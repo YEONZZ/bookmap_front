@@ -1,9 +1,17 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:bookmap/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:bookmap/design/color.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
+import '../api_key.dart';
+
+//홈 화면에서 서재에 있는 책 4권 눌렀을 때 페이지
 class SearchDetailGetPage extends StatefulWidget {
+  final dynamic homeData;
+  SearchDetailGetPage({required this.homeData});
+
   @override
   _SearchDetailGetPageState createState() => _SearchDetailGetPageState();
 }
@@ -54,7 +62,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                     children: [
                       Center(
                         child: Image.network(
-                          'https://shopping-phinf.pstatic.net/main_3839015/38390159619.20230502161943.jpg?type=w300',
+                          widget.homeData['image'],
                           fit: BoxFit.contain,
                           width: 200,
                           height: 200,
@@ -262,7 +270,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                                         margin: EdgeInsets.only(left: 5, bottom: 5),
                                         child: Align(
                                             alignment: Alignment.centerLeft,
-                                            child: Text('ISBN설명',))
+                                            child: Text('${widget.homeData['isbn']}',))
                                     ),
                                   ],
                                 ),
@@ -301,4 +309,13 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
   }
 }
 
+Future<List<Map<String, dynamic>>> _fetchData() async {
+  http.Client client = http.Client();
+  //dynamic getIsbn =
+  final response = await client.get(Uri.parse(tmdbApiKey + 'bookdetail/4?isbn=9791166831515'));
+  var data = jsonDecode(utf8.decode(response.bodyBytes));
 
+  List<Map<String, dynamic>> listData = [data]; // data를 리스트로 감싸기
+
+  return listData;
+}

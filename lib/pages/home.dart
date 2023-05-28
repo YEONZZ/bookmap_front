@@ -123,9 +123,9 @@ class HomeStatelessWidget extends StatelessWidget{
                             return Row(
                               children: imageUrl.map((data) {
                                 dynamic img = data;
-                                List<dynamic> imageDatas = img['bookImageDto'];
+                                List<dynamic> homeDatas = img['bookImageDto'];
                                 return Row(
-                                  children: imageDatas.sublist(0, 4).map((imageData) {
+                                  children: homeDatas.sublist(0, 4).map((homeData) {
                                     return Container(
                                       margin: EdgeInsets.only(left: 10, right: 10),
                                       child: GestureDetector(
@@ -133,12 +133,12 @@ class HomeStatelessWidget extends StatelessWidget{
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => SearchDetailGetPage(),
+                                              builder: (context) => SearchDetailGetPage(homeData: homeData),
                                             ),
                                           );
                                         },
                                         child: Image.network(
-                                          imageData['image'],
+                                          homeData['image'],
                                           width: 90,
                                           height: 120,
                                           fit: BoxFit.fitHeight,
