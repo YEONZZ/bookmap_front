@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:bookmap/design/color.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
+// 도서 검색 후 검색 결과 도서 터치시 연결되는 도서 상세 페이지
 class SearchDetailPage extends StatelessWidget {
   final dynamic data;
 
@@ -45,6 +46,24 @@ class _SearchDetail extends State<SearchDetail> {
     final example = DateTime(2023, 05, 02);
     var diff = const Duration(days: 0);
     diff = currentDate.difference(example);
+    String bottomSheetContent = '';
+    void onReadBooksPressed() {
+      setState(() {
+        bottomSheetContent = '읽은 책 내용'; //추후 함수 수정
+      });
+    }
+
+    void onReadingNowPressed() {
+      setState(() {
+        bottomSheetContent = '읽고 있는 책 내용'; //추후 함수 수정
+      });
+    }
+
+    void onWantToReadPressed() {
+      setState(() {
+        bottomSheetContent = '읽고 싶은 책 내용'; //추후 함수 수정
+      });
+    }
 
     if (data == null) {
       return Center(child: Text('데이터 전송 오류'),);
@@ -70,8 +89,104 @@ class _SearchDetail extends State<SearchDetail> {
               ),
               centerTitle: true,
               actions: <Widget>[
-                IconButton(onPressed: () {},
-                    icon: Icon(Icons.add_box, color: appcolor.shade600,))
+                IconButton(onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context){
+                        return FractionallySizedBox(
+                          widthFactor: 1.0,
+                          heightFactor: 0.4, // 시트 높이 비율 조정
+                          child: Column(
+                            children: [
+                              Container(
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 10),
+                                  child: Text(
+                                    '어떤 책인가요?',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                    ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: 10),
+                                child: Row(children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextButton( //읽은 책 버튼
+                                        onPressed: (){
+                                          onReadBooksPressed;
+                                        },
+                                        style: TextButton.styleFrom(
+                                            shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                                            backgroundColor: Colors.white,
+                                            minimumSize: Size(double.infinity, 100),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Padding(padding: EdgeInsets.only(top: 5)),
+                                            Text('읽은 책', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                                            Padding(padding: EdgeInsets.only(top: 5))],)),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextButton( // 읽고있는 책 버튼
+                                        onPressed: (){
+                                          onReadingNowPressed;
+                                        },
+                                        style: TextButton.styleFrom(
+                                            shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),),
+                                            backgroundColor: Colors.white,
+                                            minimumSize: Size(double.infinity, 100),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Padding(padding: EdgeInsets.only(top: 5)),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text('읽고 있는 책', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                                              ],
+                                            ),
+                                            Padding(padding: EdgeInsets.only(top: 5))],)),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: TextButton( // 읽고싶은책 버튼
+                                        onPressed: (){
+                                          onWantToReadPressed;
+                                        },
+                                        style: TextButton.styleFrom(
+                                            shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),),
+                                            backgroundColor: Colors.white,
+                                            minimumSize: Size(double.infinity, 100),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Padding(padding: EdgeInsets.only(top: 5)),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Text('읽고 싶은 책', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                                              ],
+                                            ),
+                                            Padding(padding: EdgeInsets.only(top: 5))],)),
+                                  ),
+                                ],),
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                    icon: Icon(Icons.add_box, color: appcolor.shade600,)
+                )
                 //책 분류 버튼
               ],
             ),
@@ -120,6 +235,7 @@ class _SearchDetail extends State<SearchDetail> {
                               color: Colors.black54,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
+                              overflow:  TextOverflow.ellipsis,
                             ),
                           ),
                         ),
