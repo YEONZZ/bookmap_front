@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:bookmap/pages/bookmap.dart';
 import 'package:bookmap/pages/hotBooks.dart';
+import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookmap/pages/search.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -131,14 +133,29 @@ class HomeStatelessWidget extends StatelessWidget{
                             return Row(
                               children: imageUrl.map((data) {
                                 dynamic img = data;
-                                return Container(
-                                  margin: EdgeInsets.only(left: 10, right: 10),
-                                  child: Image.network(
-                                    img['bookImageDto'][0]['image'],
-                                    width: 90,
-                                    height: 120,
-                                    fit: BoxFit.fitHeight,
-                                  ),
+                                List<dynamic> homeDatas = img['bookImageDto'];
+                                return Row(
+                                  children: homeDatas.sublist(0, 4).map((homeData) {
+                                    return Container(
+                                      margin: EdgeInsets.only(left: 10, right: 10),
+                                      child: GestureDetector(
+                                        onTap: (){
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => SearchDetailGetPage(homeData: homeData),
+                                            ),
+                                          );
+                                        },
+                                        child: Image.network(
+                                          homeData['image'],
+                                          width: 90,
+                                          height: 120,
+                                          fit: BoxFit.fitHeight,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                                 );
                               }).toList(),
                             );

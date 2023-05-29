@@ -2,8 +2,8 @@ import 'package:bookmap/pages/search.dart';
 import 'package:flutter/material.dart';
 import 'package:bookmap/design/color.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:flutter/scheduler.dart' show TickerProviderStateMixin;
 
+// 도서 검색 후 검색 결과 도서 터치시 연결되는 도서 상세 페이지
 class SearchDetailPage extends StatelessWidget {
   final dynamic data;
 
@@ -30,7 +30,7 @@ class SearchDetail extends StatefulWidget {
 }
 
 
-class _SearchDetail extends State<SearchDetail> with TickerProviderStateMixin {
+class _SearchDetail extends State<SearchDetail> {
   late final dynamic data;
 
   @override
@@ -71,8 +71,25 @@ class _SearchDetail extends State<SearchDetail> with TickerProviderStateMixin {
               ),
               centerTitle: true,
               actions: <Widget>[
-                IconButton(onPressed: () {},
-                    icon: Icon(Icons.add_box, color: appcolor.shade600,))
+                PopupMenuButton(
+                  icon: Icon(Icons.add_box, color: appcolor.shade600,),
+                  onSelected: (value) {
+                    if (value == 1) { //북맵 저장 버튼 터치
+                      _handleSaveBookmark(context);
+                    } else if (value == 2) { // 메모 저장 버튼 터치
+                      
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                    PopupMenuItem(
+                      value: 1,
+                      child: Text('북맵 저장'),
+                    ),
+                    PopupMenuDivider(),
+                    PopupMenuItem(value: 2, child: Text('메모 추가')),
+                  ],
+                )
+
                 //책 분류 버튼
               ],
             ),
@@ -121,6 +138,7 @@ class _SearchDetail extends State<SearchDetail> with TickerProviderStateMixin {
                               color: Colors.black54,
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
+                              overflow:  TextOverflow.ellipsis,
                             ),
                           ),
                         ),
@@ -333,4 +351,102 @@ class _SearchDetail extends State<SearchDetail> with TickerProviderStateMixin {
           )
       );
     }
-  }}
+  }
+}
+
+void _handleSaveBookmark(BuildContext context) { // 북맵 저장 함수
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return FractionallySizedBox(
+        widthFactor: 1.0,
+        heightFactor: 0.4, // 시트 높이 비율 조정
+        child: Column(
+          children: [
+            Container(
+              child: Container(
+                margin: EdgeInsets.only(top: 10),
+                child: Text(
+                  '어떤 책인가요?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Row(children: [
+                Expanded(
+                  flex: 1,
+                  child: TextButton( //읽은 책 버튼
+                      onPressed: (){
+                        //onReadBooksPressed;
+                      },
+                      style: TextButton.styleFrom(
+                        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
+                        backgroundColor: Colors.white,
+                        minimumSize: Size(double.infinity, 100),
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Text('읽은 책', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                          Padding(padding: EdgeInsets.only(top: 5))],)),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: TextButton( // 읽고있는 책 버튼
+                      onPressed: (){
+                        //onReadingNowPressed;
+                      },
+                      style: TextButton.styleFrom(
+                        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),),
+                        backgroundColor: Colors.white,
+                        minimumSize: Size(double.infinity, 100),
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('읽고 있는 책', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 5))],)),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: TextButton( // 읽고싶은책 버튼
+                      onPressed: (){
+                        //onWantToReadPressed;
+                      },
+                      style: TextButton.styleFrom(
+                        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black26),
+                          borderRadius: BorderRadius.all(Radius.circular(10)),),
+                        backgroundColor: Colors.white,
+                        minimumSize: Size(double.infinity, 100),
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(padding: EdgeInsets.only(top: 5)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('읽고 싶은 책', style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
+                            ],
+                          ),
+                          Padding(padding: EdgeInsets.only(top: 5))],)),
+                ),
+              ],),
+            )
+          ],
+        ),
+      );
+    },
+  );
+}

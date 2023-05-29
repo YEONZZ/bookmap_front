@@ -80,7 +80,7 @@ class _FirstPage extends State<FirstPage> {
                     itemCount: books.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> book = books[index] as Map<String, dynamic>;
-                      print(books);
+                      //print(books); //정보 찍어보기
                       var img = book['image'];
                       var title = book['title'];
                       var author = book['author'];
