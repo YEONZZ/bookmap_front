@@ -55,11 +55,11 @@ class _Calendar extends State<Calendar>{
       //locale: 'ko_KR',
       //daysOfWeekHeight: 30,
       calendarStyle: CalendarStyle(
-          markerDecoration: BoxDecoration(color: appcolor.shade600, shape: BoxShape.circle),
-          todayDecoration: BoxDecoration(color: Colors.transparent,
-          shape: BoxShape.circle, border: Border.all(color: appcolor.shade600, width: 1.5),)
-      , todayTextStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-      availableGestures: AvailableGestures.none,
+          markerDecoration: BoxDecoration(color: appcolor.shade600, shape: BoxShape.circle,),
+          todayDecoration: BoxDecoration(color: appcolor.shade100,
+          shape: BoxShape.circle)
+      , todayTextStyle: TextStyle(fontWeight: FontWeight.bold, color: appcolor.shade400)),
+      availableGestures: AvailableGestures.horizontalSwipe,
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,
