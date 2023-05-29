@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'package:bookmap/pages/bookmap.dart';
+import 'package:bookmap/pages/hotBooks.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookmap/pages/search.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import '../design/color.dart';
 import 'package:bookmap/api_key.dart';
-import '../main.dart';
+import 'library.dart';
 
 final imageList = [
   Image.network(
@@ -41,7 +43,7 @@ class Home extends StatelessWidget {
 }
 
 class HomeStatelessWidget extends StatelessWidget{
-  @override
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -89,7 +91,7 @@ class HomeStatelessWidget extends StatelessWidget{
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.only(left: 12, right: 12),
                 child: Row(
                   children: [
                     Expanded(
@@ -97,14 +99,21 @@ class HomeStatelessWidget extends StatelessWidget{
                         child: Text('서재',
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),)
                     ),
-                    Text('더보기',
-                        style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
-                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => Library())
+                          );
+                        },
+                        child: Text('더보기',
+                            style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
+                        )),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, top: 0),
+                padding: const EdgeInsets.only(left: 12, right: 12),
                 child: Container(
                   decoration: BoxDecoration(
                     color: appcolor.shade50,
@@ -144,7 +153,7 @@ class HomeStatelessWidget extends StatelessWidget{
               ),
               //북맵
               Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 20),
+                padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 12),
                 child: Row(
                   children: [
                     Expanded(
@@ -152,14 +161,21 @@ class HomeStatelessWidget extends StatelessWidget{
                         child: Text('북맵',
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),)
                     ),
-                    Text('더보기',
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => BookMap())
+                          );
+                        },
+                        child: Text('더보기',
                         style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
-                    ),
+                    )),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12, top: 12),
+                padding: const EdgeInsets.only(left: 12.0, right: 12),
                 child: CarouselSlider(
                   options: CarouselOptions(height: 150.0, autoPlay: true),
                   items: imageList.map((image) {
@@ -187,21 +203,28 @@ class HomeStatelessWidget extends StatelessWidget{
                         child: Text('다른 사용자들이 많이 읽은 도서',
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),)
                     ),
-                    Text('더보기',
-                        style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
+                    TextButton(onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HotBooks())
+                      );
+                    },
+                      style: ButtonStyle(),
+                      child: Text('더보기',
+                        style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)),
                     ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, top:12),
+                padding: const EdgeInsets.only(left: 12, right: 12, top:0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: appcolor.shade50,
                     borderRadius: BorderRadius.all(Radius.circular(16)),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.of(context).size.height * 0.39,
                   child: Column(
                     children: [
                       Padding(padding: EdgeInsets.all(10)),

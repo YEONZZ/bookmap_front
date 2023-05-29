@@ -3,6 +3,7 @@ import 'package:bookmap/pages/search_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../design/color.dart';
 
 class Search extends StatelessWidget {
   //Search({required this.screens});

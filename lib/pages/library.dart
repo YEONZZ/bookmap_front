@@ -6,27 +6,11 @@ import 'package:http/http.dart' as http;
 import '../api_key.dart';
 import 'search.dart';
 import 'profile.dart';
+import '../design/color.dart';
 
 void main() {
   runApp(Library());
 }
-
-const MaterialColor appcolor = MaterialColor(
-  _appcolor,
-  <int, Color>{
-    50: Color(0xFFD9E8DA),
-    100: Color(0xFFB9D7BB),
-    200: Color(0xFFA2C9A3),
-    300: Color(0xFF93B696),
-    400: Color(0xFF85A485),
-    500: Color(_appcolor),
-    600: Color(0xFF8DC08D),
-    700: Color(0xFF7FAD7F),
-    800: Color(0xFF4E544F),
-    900: Color(0xFF323632),
-  },
-);
-const int _appcolor = 0xFFB9D7BB;
 
 class Library extends StatelessWidget {
   static const String _title = 'Widget Example';
