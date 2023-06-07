@@ -1,7 +1,14 @@
+import 'dart:convert';
+
+import 'package:bookmap/api_key.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/io_client.dart';
+import '../login.dart';
 import 'bookmap_example.dart';
 import 'makingBookMap.dart';
+import 'myBookmapDetail.dart';
 import 'search.dart';
 import 'package:bookmap/design/color.dart';
 
@@ -78,26 +85,30 @@ class MyBookmap extends StatelessWidget{
     );}}
 
 class MyMapData extends StatefulWidget {
+  const MyMapData({super.key});
+
+  @override
   State<StatefulWidget> createState() => _MyMapData();
 }
 
 class _MyMapData extends State<MyMapData>{
   String result = '';
-  //TextEditingController? _editingController;
   ScrollController? _scrollController;
   List? data;
   int page = 1;
 
+  @override
   void initState(){
     super.initState();
-    data = new List.empty(growable: true);
-    //_editingController = new TextEditingController();
-    _scrollController = new ScrollController();
+    data = List.empty(growable: true);
+    _scrollController = ScrollController();
     _scrollController!.addListener(() {
       if(_scrollController!.offset >=
       _scrollController!.position.maxScrollExtent &&
       !_scrollController!.position.outOfRange){
-        print('end');
+        if (kDebugMode) {
+          print('end');
+        }
         page ++;
         //getJSONData(); 과 같이 데이터를 불러오는 것
     }});
@@ -106,38 +117,81 @@ class _MyMapData extends State<MyMapData>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Center(
-          child: data!.length == 0
-              ? Text('아직 저장된 북맵이 없습니다.')
-              : ListView.builder(
-            itemBuilder: (context, index){
-              return InkWell(
-                onTap: (){},
-                child: Container(
-                  child: Row(
-                    children: <Widget>[
-                      Image.network(data![index]['thumbnail'],
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.contain),
-                      Column(
-                        children: <Widget>[
-                          Text('북맵 제목', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                          Text('북맵 소개글', style: TextStyle(fontSize: 11))
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          )
-        ),
-      )
-    );
+        body: SingleChildScrollView(
+            //scrollDirection: Axis.vertical,
+            child: FutureBuilder<List<dynamic>>(
+              future: _getbookmap(),
+              builder: (context, snapshot){
+                if (snapshot.hasData){
+                  List myBookmaps = snapshot.data!;
+                  //print(myBookmaps.length);
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: myBookmaps.length + 1,
+                    itemBuilder: (context, index){
+                      //print(index);
+                      var myBookmap = myBookmaps[0][index];
+                      var mapId = myBookmap['bookMapId'];
+                      var title = myBookmap['bookMapTitle'];
+                      //print("확인!!!!!!!!! $title");
+                      var content = myBookmap['bookMapContent'];
+                      var bookmapimg = myBookmap['bookMapImage'];
+                      if (bookmapimg == null){
+                        bookmapimg = 'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832';
+                      }
+                      var keyword = myBookmap['hashTag'];
+                      var share = myBookmap['share'];
+                      return GestureDetector(
+                        onTap:(){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => myMapDetail(myBookmap),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 12.0),
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: appcolor.shade50,
+                              borderRadius: BorderRadius.all(Radius.circular(10)),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Image.network(bookmapimg,
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.fitWidth),
+                                Padding(padding: EdgeInsets.only(right: 10)),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                        textAlign: TextAlign.start),
+                                    const Text(''),
+                                    Text(content, textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+                else if (snapshot.hasError){
+                  return Text('Error: ${snapshot.error}');
+                }
+                else{
+                  return CircularProgressIndicator();
+                }
+              },
+            )
+        ));
   }
-
 }
 
 class Scrap extends StatelessWidget{
@@ -155,78 +209,63 @@ class SampleList extends StatelessWidget{
     return  Scaffold(
         body: SingleChildScrollView(
             scrollDirection: Axis.vertical,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 20),
-              child: Column(
-                children: [
-                  InkWell(
-                    onTap: (){
-                      Navigator.push (
-                        context,
-                        MaterialPageRoute(builder: (context) => BookmapEx()),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: appcolor.shade50,
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          Image.network('https://shopping-phinf.pstatic.net/main_3839015/38390159619.20230502161943.jpg?type=w300',
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover),
-                          Padding(padding: EdgeInsets.only(right: 10)),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text('여행가고 싶은 곳들', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.start),
-                              Text(''),
-                              Text('가고 싶은 여행지에 대한 책들을 담은 북맵\n제주도, 이탈리아, 아프리카 등등', textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                    ),
-                  Padding(padding: EdgeInsets.only(top: 10),
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _getscrapmap(),
+              builder: (context, snapshot){
+                if (snapshot.hasData){
+                  List<Map<String, dynamic>> a = snapshot.data!;
+                  return Text('$a');
+                }
+                else if (snapshot.hasError){
+                  return Text('Error: ${snapshot.error}');
+                }
+                else{
+                  return CircularProgressIndicator();
+                }
+              },
 
-                  ),
-                  InkWell(
-                    onTap: (){
-                      Text("클릭");
-                    },
-                    child: Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: appcolor.shade50,
-                        borderRadius: BorderRadius.all(Radius.circular(16)),
-                      ),
-                      child: Row(
-                        children: <Widget>[
-                          Image.network('https://shopping-phinf.pstatic.net/main_3248510/32485101755.20221227203600.jpg?type=w300',
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover),
-                          Padding(padding: EdgeInsets.only(right: 10)),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text('CS 공부', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.start),
-                              Text(''),
-                              Text('CS 관련 도서\n이산수학, 선형대수, 알고리즘, 인공지능', textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             )));
   }
+}
+
+Future<List<dynamic>> _getbookmap() async {
+
+  final httpClient = IOClient();
+  final bookmapResponse = await httpClient.get(
+      Uri.parse('$bookmapKey/bookmap/1'),
+      //headers: <String, String>{
+      //  'Authorization': 'Bearer $token'
+      //}
+      );
+
+  var bookmapTest = jsonDecode(utf8.decode(bookmapResponse.bodyBytes));
+
+  if (kDebugMode) {
+    print(bookmapTest);
+  }
+
+  List<dynamic> listData = [bookmapTest]; // data를 리스트로 감싸기
+
+  return listData;
+}
+
+Future<List<Map<String, dynamic>>> _getscrapmap() async {
+
+  final httpClient = IOClient();
+  final bookmapResponse = await httpClient.get(
+    Uri.parse('$bookmapKey/bookmap/view/1'),
+    //headers: <String, String>{
+    //  'Authorization': 'Bearer $token'
+    //}
+  );
+
+  var bookmapTest = jsonDecode(utf8.decode(bookmapResponse.bodyBytes));
+
+  if (kDebugMode) {
+    print(bookmapTest);
+  }
+
+  List<Map<String, dynamic>> listData = [bookmapTest]; // data를 리스트로 감싸기
+
+  return listData;
 }
