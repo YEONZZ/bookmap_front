@@ -48,7 +48,7 @@ class Home extends StatelessWidget {
 }
 
 class HomeStatelessWidget extends StatelessWidget{
-    @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -132,26 +132,27 @@ class HomeStatelessWidget extends StatelessWidget{
                         future: _fetchData(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
-                            List<Map<String, dynamic>> imageUrl = snapshot.data!;
+                            List<Map<String, dynamic>> dataList = snapshot.data!;
                             return Row(
-                              children: imageUrl.map((data) {
-                                dynamic img = data;
-                                List<dynamic> homeDatas = img['bookImageDto'];
+                              children: dataList.map((data) {
+                                dynamic getData = data;
+                                List<dynamic> getHomeDatas = getData['bookImageDto'];
                                 return Row(
-                                  children: homeDatas.sublist(0, 4).map((homeData) {
+                                  children: getHomeDatas.sublist(0, 4).map((getHomeData) {
                                     return Container(
                                       margin: EdgeInsets.only(left: 10, right: 10),
                                       child: GestureDetector(
-                                        onTap: (){
+                                        onTap: () async{
+                                          String homeIsbn = getHomeData['isbn'];
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => SearchDetailGetPage(homeData: homeData),
+                                              builder: (context) => SearchDetailGetPage(homeIsbn: homeIsbn),
                                             ),
                                           );
                                         },
                                         child: Image.network(
-                                          homeData['image'],
+                                          getHomeData['image'],
                                           width: 90,
                                           height: 120,
                                           fit: BoxFit.fitHeight,
@@ -189,8 +190,8 @@ class HomeStatelessWidget extends StatelessWidget{
                           );
                         },
                         child: Text('더보기',
-                        style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
-                    )),
+                            style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
+                        )),
                   ],
                 ),
               ),
@@ -231,7 +232,7 @@ class HomeStatelessWidget extends StatelessWidget{
                     },
                       style: ButtonStyle(),
                       child: Text('더보기',
-                        style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)),
+                          style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)),
                     ),
                   ],
                 ),
@@ -244,7 +245,7 @@ class HomeStatelessWidget extends StatelessWidget{
                     borderRadius: BorderRadius.all(Radius.circular(16)),
                   ),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.39,
+                  height: MediaQuery.of(context).size.height * 0.45,
                   child: Column(
                     children: [
                       Padding(padding: EdgeInsets.all(10)),

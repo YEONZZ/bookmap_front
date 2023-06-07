@@ -1,8 +1,10 @@
 import 'package:bookmap/pages/library.dart';
 import 'package:bookmap/pages/search_detail.dart';
+import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../api_key.dart';
 import '../design/color.dart';
 
 class Search extends StatelessWidget {
@@ -23,7 +25,6 @@ class HttpApp extends StatefulWidget {
 }
 
 class _HttpApp extends State<HttpApp> {
-  String reData = '';
   TextEditingController? _editingController;
   ScrollController? _scrollController;
   static List? data;
@@ -37,12 +38,11 @@ class _HttpApp extends State<HttpApp> {
     if (data == null) {
       data = new List.empty(growable: true);
     }
-    //print(reData); //아직 아무것도 찍히지않음
     _editingController = new TextEditingController();
     _scrollController = new ScrollController();
     _scrollController!.addListener(() {
       if (_scrollController!.offset >=
-              _scrollController!.position.maxScrollExtent &&
+          _scrollController!.position.maxScrollExtent &&
           !_scrollController!.position.outOfRange) {
         page++;
         getJSONData();
@@ -124,110 +124,108 @@ class _HttpApp extends State<HttpApp> {
             body: _isLoading
                 ? LoadingIndicator() //로딩중이 아닐때
                 : GestureDetector(
-                    onTap: () {
-                      _focusNode.unfocus(); //화면 터치시 키보드 내림
-                    },
-                    child: FocusScope(
-                        child: TabBarView(
-                      children: [
-                        Center(
-                          child: data!.length == 0
-                              ? Text(
-                                  '데이터가 존재하지 않습니다.\n검색해주세요',
-                                  style: TextStyle(fontSize: 20),
-                                  textAlign: TextAlign.center,
-                                )
-                              : ListView.builder(
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        final searchResult =
-                                            await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SearchDetailPage(
-                                                      data: data![index])),
-                                        );
-
-                                        setState(() {
-                                          reData = searchResult; //SearchDetailPage값 가져오기
-                                        });
-                                      },
-                                      child: Card(
-                                        child: Container(
-                                          child: Row(
-                                            children: <Widget>[
-                                              Image.network(
-                                                  data![index]['thumbnail'],
-                                                  height: 120,
-                                                  width: 120,
-                                                  fit: BoxFit.contain,
-                                                  errorBuilder: (BuildContext
-                                                          context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
-                                                return Padding(
-                                                  padding: const EdgeInsets.all(30),
-                                                  child: const Text('이미지없음',
-                                                      textAlign: TextAlign.center),
-                                                );
-                                              } // 대체 이미지를 반환
-                                                  ),
-                                              Column(
-                                                children: <Widget>[
-                                                  Container(
-                                                    margin: EdgeInsets.all(8),
-                                                    width:
-                                                        MediaQuery.of(context).size.width - 150,
-                                                    child: Text(
-                                                      data![index]['title'].toString(),
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight: FontWeight.bold),
-                                                      textAlign: TextAlign.center,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                      margin: EdgeInsets.only(bottom: 8),
-                                                      width: MediaQuery.of(context).size.width - 150,
-                                                      child: Text(
-                                                          '저자 : ${data![index]['authors'].join(', ')}',
-                                                          style: TextStyle(
-                                                              color: Colors.black45,
-                                                              fontSize: 13),
-                                                          overflow: TextOverflow.ellipsis,
-                                                          textAlign: TextAlign.center)),
-                                                  Container(
-                                                    margin: EdgeInsets.only(bottom: 20),
-                                                    width: MediaQuery.of(context).size.width - 150,
-                                                    child: Text(data![index]['contents'].toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: Colors.black38),
-                                                        maxLines: 3,
-                                                        overflow: TextOverflow.ellipsis),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  itemCount: data!.length,
-                                  controller: _scrollController,
-                                ),
-                        ),
-                        Center(
-                          child: Text('북맵검색결과'),
+              onTap: () {
+                _focusNode.unfocus(); //화면 터치시 키보드 내림
+              },
+              child: FocusScope(
+                  child: TabBarView(
+                    children: [
+                      Center(
+                        child: data!.length == 0
+                            ? Text(
+                          '데이터가 존재하지 않습니다.\n검색해주세요',
+                          style: TextStyle(fontSize: 20),
+                          textAlign: TextAlign.center,
                         )
-                      ],
-                    )),
-                  )));
+                            : ListView.builder(
+                          itemBuilder: (context, index) {
+                            String kakaoIsbn = data![index]['isbn'];
+                            return GestureDetector(
+                              onTap: () async {
+                                var searchData = await _fetchISBN(kakaoIsbn);
+                                print('카카오isbn: ${kakaoIsbn}');
+                                print('검색결과: ${searchData}');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SearchDetailPage(searchData: searchData),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                child: Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      Image.network(
+                                          data![index]['thumbnail'],
+                                          height: 120,
+                                          width: 120,
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (BuildContext
+                                          context,
+                                              Object exception,
+                                              StackTrace? stackTrace) {
+                                            return Padding(
+                                              padding: const EdgeInsets.all(30),
+                                              child: const Text('이미지없음',
+                                                  textAlign: TextAlign.center),
+                                            );
+                                          } // 대체 이미지를 반환
+                                      ),
+                                      Column(
+                                        children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.all(8),
+                                            width:
+                                            MediaQuery.of(context).size.width - 150,
+                                            child: Text(
+                                              data![index]['title'].toString(),
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Container(
+                                              margin: EdgeInsets.only(bottom: 8),
+                                              width: MediaQuery.of(context).size.width - 150,
+                                              child: Text(
+                                                  '저자 : ${data![index]['authors'].join(', ')}',
+                                                  style: TextStyle(
+                                                      color: Colors.black45,
+                                                      fontSize: 13),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center)),
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 20),
+                                            width: MediaQuery.of(context).size.width - 150,
+                                            child: Text(data![index]['contents'].toString(),
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.black38),
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          itemCount: data!.length,
+                          controller: _scrollController,
+                        ),
+                      ),
+                      Center(
+                        child: Text('북맵검색결과'),
+                      )
+                    ],
+                  )),
+            )));
   }
 
   Future<String> getJSONData() async {
@@ -261,3 +259,12 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
     );
   }
 }
+
+Future<Map<String, dynamic>> _fetchISBN(kakaoIsbn) async {
+  http.Client client = http.Client();
+  final response = await client.get(Uri.parse(tmdbApiKey + '/bookdetail/4?isbn='+'${kakaoIsbn}'));
+  var searchData = jsonDecode(utf8.decode(response.bodyBytes));
+
+  return searchData;
+}
+
