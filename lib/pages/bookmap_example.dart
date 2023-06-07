@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../design/color.dart';
 import 'editingBookMap.dart';
 
 class BookmapEx extends StatelessWidget{
@@ -30,10 +31,13 @@ class _BookmapEx extends StatelessWidget{
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Text('#키워드1 #키워드2 #키워드3', style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic, color: Colors.deepPurple),),
+                  Padding(padding: EdgeInsets.all(2)),
                   Text('가고 싶은 여행지에 대한 책들을 담은 북맵\n제주도, 이탈리아, 아프리카 등등',
                   style: TextStyle(fontSize: 13,color: Colors.black54),
                   textAlign: TextAlign.right,),
-                  Text('여행가고 싶은 곳들', style: TextStyle(fontSize: 25, color: Colors.black),
+                  Padding(padding: EdgeInsets.all(2)),
+                  Text('여행가고 싶은 곳들', style: TextStyle(fontSize: 28, color: Colors.black, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.right,),
                 ],
               ),

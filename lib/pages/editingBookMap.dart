@@ -17,6 +17,9 @@ class EditingBookMap extends StatelessWidget {
 
 
 class _EditingBookMap extends StatelessWidget{
+  final TextEditingController _titleEditingController = TextEditingController();
+  final TextEditingController _sentencesEditingController = TextEditingController();
+  final TextEditingController _keywordEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,49 +32,132 @@ class _EditingBookMap extends StatelessWidget{
                 //decoration: BoxDecoration(),
                 color: Colors.orange.shade200,
                 width: double.infinity,
-                height: 150,
+                height: 230,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('가고 싶은 여행지에 대한 책들을 담은 북맵\n제주도, 이탈리아, 아프리카 등등',
-                      style: TextStyle(fontSize: 13,color: Colors.black54),
-                      textAlign: TextAlign.right,),
-                    Text('여행가고 싶은 곳들', style: TextStyle(fontSize: 25, color: Colors.black),
-                      textAlign: TextAlign.right,),
+                    TextField(style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.black),
+                      controller: _titleEditingController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(width: 3, color: Colors.black87)
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 2, color: Colors.black87)
+                        ),
+                        suffixIcon: GestureDetector(
+                          child: const Icon(
+                            Icons.cancel,
+                            color: Colors.black38,
+                            size: 20,
+                          ),
+                          onTap: () => _titleEditingController.clear(),
+                        ),
+                        labelText: '북맵 제목',
+                        labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                        hintText: '여행가고 싶은 곳들',
+                        hintStyle: TextStyle(color: Colors.black38, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.all(5)),
+                    TextField(
+                      maxLines: 2,
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.black),
+                      controller: _sentencesEditingController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(width: 3, color: Colors.black87)
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 2, color: Colors.black87)
+                        ),
+                        suffixIcon: GestureDetector(
+                          child: const Icon(
+                            Icons.cancel,
+                            color: Colors.black38,
+                            size: 20,
+                          ),
+                          onTap: () => _sentencesEditingController.clear(),
+                        ),
+                        labelText: '북맵 소개글',
+                        labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                        hintText: '가고 싶은 여행지에 대한 책들을 담은 북맵\n제주도, 이탈리아, 아프리카 등등',
+                        hintStyle: TextStyle(color: Colors.black38, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.all(5)),
+                    TextField(style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.black),
+                      controller: _keywordEditingController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(width: 3, color: Colors.black87)
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(width: 2, color: Colors.black87)
+                        ),
+                        suffixIcon: GestureDetector(
+                          child: const Icon(
+                            Icons.cancel,
+                            color: Colors.black38,
+                            size: 20,
+                          ),
+                          onTap: () => _keywordEditingController.clear(),
+                        ),
+                        labelText: '키워드',
+                        labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                        hintText: '#키워드1 #키워드2 #키워드3',
+                        hintStyle: TextStyle(color: Colors.black38, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ],
                 ),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(onPressed: () {
-                    showDialog(
-                        context: context,
-                        barrierDismissible: true, // 바깥 영역 터치시 닫을지 여부
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            insetPadding: const  EdgeInsets.fromLTRB(100,0,100,0),
-                            actionsAlignment: MainAxisAlignment.center,
-                            actions: [
-                              TextButton(
-                                child: const Text('도서', style: TextStyle(fontSize: 14, color: Colors.black),),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: const Text('메모', style: TextStyle(fontSize: 14, color: Colors.black),),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        }
-                    );
-                  },child: Text('추가',
-                    style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),))
+                  Padding(padding: EdgeInsets.all(10)),
+                  Expanded(
+                    flex: 3,
+                    child: OutlinedButton(onPressed: () {
+                      showDialog(
+                          context: context,
+                          barrierDismissible: true, // 바깥 영역 터치시 닫을지 여부
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              insetPadding: const  EdgeInsets.fromLTRB(100,0,100,0),
+                              actionsAlignment: MainAxisAlignment.center,
+                              actions: [
+                                TextButton(
+                                  child: const Text('도서', style: TextStyle(fontSize: 14, color: Colors.black),),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('메모', style: TextStyle(fontSize: 14, color: Colors.black),),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          }
+                      );
+                    },child: Text('추가',
+                      style: TextStyle(fontSize: 14, color: Colors.black87),),
+                    style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white)),),
+                  ),
+                  Expanded(
+                    flex: 1,
+                      child: Padding(padding: EdgeInsets.all(10))),
+                  Expanded(
+                    flex: 3,
+                    child: OutlinedButton(onPressed: (){},
+                        child: Text('저장', style: TextStyle(fontSize: 14, color: Colors.black87)),
+                          style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white))),
+                  ),
+                  Padding(padding: EdgeInsets.all(10))
                 ],
               ),
               const Divider(
@@ -232,6 +318,7 @@ class _EditingBookMap extends StatelessWidget{
                     )],
                 ),
               ),
+
             ],
           )
       ),

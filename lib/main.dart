@@ -9,12 +9,18 @@ import 'pages/profile.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(MyApp());
+  await Firebase.initializeApp(
+      options: const FirebaseOptions
+        (apiKey: 'AIzaSyCgaycqfp5RTa83bskUumkhWzgzVu6PGWY',
+          appId: '1:205578501902:android:0e919009bf38aa23c2615f',
+          messagingSenderId: '205578501902',
+          projectId: 'fentarim-c479e')
+  );
+  runApp(MyApp(token));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp(token, {super.key});
 
   static const String _title = 'Flutter Code Sample';
 
@@ -51,7 +57,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   // static const TextStyle optionStyle =
   // TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    Home(), Library(), BookMap(), Profile()
+    Home(token), Library(), BookMap(), Profile()
   ];
 
   void _onItemTapped(int index) {

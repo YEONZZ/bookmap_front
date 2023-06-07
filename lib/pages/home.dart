@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:bookmap/pages/bookmap.dart';
 import 'package:bookmap/pages/hotBooks.dart';
 import 'package:bookmap/pages/search_detail_get.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookmap/pages/search.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:http/io_client.dart';
 import '../design/color.dart';
 import 'package:bookmap/api_key.dart';
+import '../login.dart';
 import 'library.dart';
 
 final imageList = [
@@ -23,12 +26,12 @@ final imageList = [
 void main() {
   http.Client client = http.Client();
   http.Client().close();
-  runApp(Home());
+  runApp(Home(token));
 }
 
 class Home extends StatelessWidget {
   static const String _title = 'Home Page';
-  const Home({Key? key}) : super(key: key);
+  const Home(token, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -304,12 +307,23 @@ class HomeStatelessWidget extends StatelessWidget{
 }
 
 Future<List<Map<String, dynamic>>> _fetchData() async {
-  http.Client client = http.Client();
 
-  final response = await client.get(Uri.parse(tmdbApiKey + '/main/4'));
-  var data = jsonDecode(utf8.decode(response.bodyBytes));
+  final httpClient = IOClient();
+  final userResponse = await httpClient.get(
+    Uri.parse('$logApiKey/main'),
+    headers: <String, String>{
+      'Authorization': 'Bearer $token'
+    });
+  //
+  // if (kDebugMode) {
+  //   print('확인!!!!:$token');
+  // }
+  var usertest = jsonDecode(utf8.decode(userResponse.bodyBytes));
+  // final response = await client.get(Uri.parse(tmdbApiKey + '/main/4'));
+  // var data = jsonDecode(utf8.decode(response.bodyBytes));
 
-  List<Map<String, dynamic>> listData = [data]; // data를 리스트로 감싸기
+  List<Map<String, dynamic>> listData = [usertest]; // data를 리스트로 감싸기
 
   return listData;
 }
+
