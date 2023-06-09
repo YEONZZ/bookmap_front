@@ -4,16 +4,18 @@ import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../api_key.dart';
+import '../login.dart';
 import 'search.dart';
 import 'profile.dart';
 import '../design/color.dart';
 
 void main() {
-  runApp(Library());
+  runApp(Library(token));
 }
 
 class Library extends StatelessWidget {
   static const String _title = 'Widget Example';
+  const Library(token, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class Library extends StatelessWidget {
       routes: {
         '/': (context) => FirstPage(),
         '/search': (context) => Search(),
-        '/profile': (context) => Profile()
+        '/profile': (context) => Profile(token)
       },
     );
   }

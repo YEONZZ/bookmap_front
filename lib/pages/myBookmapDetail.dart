@@ -45,11 +45,11 @@ class _BookmapEx extends StatelessWidget{
         child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.only(top: 35, right: 15, left: 15, bottom: 15),
                   //decoration: BoxDecoration(),
                   color: Colors.orange.shade200,
                   width: double.infinity,
-                  height: 150,
+                  height: 170,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -71,7 +71,7 @@ class _BookmapEx extends StatelessWidget{
                     TextButton(onPressed: (){
                       Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => EditingBookMap())
+                          MaterialPageRoute(builder: (context) => EditingBookMap(mapId))
                       );
                     }, child: Text('EDIT',
                       style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),))

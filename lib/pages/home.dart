@@ -108,7 +108,7 @@ class HomeStatelessWidget extends StatelessWidget{
                         onPressed: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Library())
+                              MaterialPageRoute(builder: (context) => Library(token))
                           );
                         },
                         child: Text('더보기',
@@ -137,8 +137,9 @@ class HomeStatelessWidget extends StatelessWidget{
                               children: imageUrl.map((data) {
                                 dynamic img = data;
                                 List<dynamic> homeDatas = img['bookImageDto'];
+                                int num = homeDatas.length;
                                 return Row(
-                                  children: homeDatas.sublist(0, 4).map((homeData) {
+                                  children: homeDatas.sublist(0, num).map((homeData) {
                                     return Container(
                                       margin: EdgeInsets.only(left: 10, right: 10),
                                       child: GestureDetector(
@@ -185,7 +186,7 @@ class HomeStatelessWidget extends StatelessWidget{
                         onPressed: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => BookMap())
+                              MaterialPageRoute(builder: (context) => BookMap(token))
                           );
                         },
                         child: Text('더보기',

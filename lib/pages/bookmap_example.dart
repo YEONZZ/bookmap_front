@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../design/color.dart';
 import 'editingBookMap.dart';
-
+int mapId = 1;
 class BookmapEx extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
@@ -48,7 +47,7 @@ class _BookmapEx extends StatelessWidget{
                 TextButton(onPressed: (){
                   Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => EditingBookMap())
+                      MaterialPageRoute(builder: (context) => EditingBookMap(mapId))
                   );
                 }, child: Text('EDIT',
                 style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),))

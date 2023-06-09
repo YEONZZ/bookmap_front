@@ -1,10 +1,14 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:http/io_client.dart';
 import 'package:table_calendar/table_calendar.dart';
-
+import '../api_key.dart';
 import '../design/color.dart';
+import '../login.dart';
 
 class MyCalendar extends StatelessWidget{
-  const MyCalendar({super.key});
+  const MyCalendar(token, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +31,16 @@ class _MyCalendar extends StatelessWidget{
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Calendar(),
-            SumUp(),
-          ],
+        child: FutureBuilder<Object>(
+          future: _getHistory(),
+          builder: (context, snapshot) {
+            return Column(
+              children: [
+                Calendar(),
+                SumUp(),
+              ],
+            );
+          }
         ),
       ),
     );
@@ -130,5 +139,25 @@ class SumUp extends StatelessWidget{
       ],
     );
   }
-  
+}
+
+Future<List<dynamic>> _getHistory() async {
+
+  final httpClient = IOClient();
+  final historyResponse = await httpClient.get(
+    Uri.parse('$bookmapKey/bookmap/1'),
+    headers: <String, String>{
+      'Authorization': 'Bearer $token'
+    }
+  );
+
+  var readHistory = jsonDecode(utf8.decode(historyResponse.bodyBytes));
+
+  if (kDebugMode) {
+    print(readHistory);
+  }
+
+  List<dynamic> listData = [readHistory]; // data를 리스트로 감싸기
+
+  return listData;
 }

@@ -22,6 +22,7 @@ dependencies:
   firebase_auth: ^4.1.2
   firebase_core: ^2.2.0
   flutterfire_ui: ^0.4.3+20
+  cloud_firestore: ^4.8.0
 
 dev_dependencies:
   flutter_test:
@@ -38,14 +39,6 @@ flutter:
   uses-material-design: true
   assets:
     - images/logo.png
+    - images/plus_button.png
 
 fading_image_button: ^0.10.0+0
-
-#spring:
-#  security:
-#    oauth2:
-#      client:
-#        provider:
-#          google:
-#            client-id: [1046810346715-4vq5b2ilab5hbilok0lsbfqug4eemaab.apps.googleusercontent.com]
-#            client-secret: [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]

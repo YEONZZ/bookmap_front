@@ -152,9 +152,9 @@ Future<String> _postData() async {
       print('헤더: ${response.headers}');
       print('반응: ${response.body}');
     }
-
+  //response.body에 닉네임 추가 가능!? 상태메시지도 가능하면 좋음
     final user = User(
-        displayName: '${authentication.currentUser?.displayName}',
+        displayName: '${authentication.currentUser?.displayName}', //수정 필요
         email: '${authentication.currentUser?.email}',
         photoURL: '${authentication.currentUser?.photoURL}',
         uid: '${authentication.currentUser?.uid}',

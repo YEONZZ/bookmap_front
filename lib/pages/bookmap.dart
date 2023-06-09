@@ -1,23 +1,24 @@
 import 'dart:convert';
 
 import 'package:bookmap/api_key.dart';
+import 'package:bookmap/pages/scrapDetail.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
 import '../login.dart';
-import 'bookmap_example.dart';
 import 'makingBookMap.dart';
 import 'myBookmapDetail.dart';
 import 'search.dart';
 import 'package:bookmap/design/color.dart';
 
 void main() {
-  runApp(BookMap());
+  runApp(BookMap(token));
 }
 
 class BookMap extends StatelessWidget {
   static const String _title = 'BookMap Page';
+  const BookMap(token, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +93,6 @@ class MyMapData extends StatefulWidget {
 }
 
 class _MyMapData extends State<MyMapData>{
-  String result = '';
   ScrollController? _scrollController;
   List? data;
   int page = 1;
@@ -118,7 +118,7 @@ class _MyMapData extends State<MyMapData>{
   Widget build(BuildContext context) {
     return Scaffold(
         body: SingleChildScrollView(
-            //scrollDirection: Axis.vertical,
+            scrollDirection: Axis.vertical,
             child: FutureBuilder<List<dynamic>>(
               future: _getbookmap(),
               builder: (context, snapshot){
@@ -127,14 +127,20 @@ class _MyMapData extends State<MyMapData>{
                   //print(myBookmaps.length);
                   return ListView.builder(
                     shrinkWrap: true,
-                    itemCount: myBookmaps.length + 1,
+                    itemCount: myBookmaps[0].length,
                     itemBuilder: (context, index){
                       //print(index);
                       var myBookmap = myBookmaps[0][index];
                       var mapId = myBookmap['bookMapId'];
                       var title = myBookmap['bookMapTitle'];
+                      if(title == null){
+                        title = '';
+                      }
                       //print("확인!!!!!!!!! $title");
                       var content = myBookmap['bookMapContent'];
+                      if(content == null){
+                        content = '';
+                      }
                       var bookmapimg = myBookmap['bookMapImage'];
                       if (bookmapimg == null){
                         bookmapimg = 'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832';
@@ -168,7 +174,7 @@ class _MyMapData extends State<MyMapData>{
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                                    Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
                                         textAlign: TextAlign.start),
                                     const Text(''),
                                     Text(content, textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
@@ -198,38 +204,94 @@ class Scrap extends StatelessWidget{
   Widget build(BuildContext context){
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SampleList(),
+      home: ScrapList(),
     );
   }
 }
 
-class SampleList extends StatelessWidget{
-  SampleList({Key? key}) : super(key: key);
+class ScrapList extends StatelessWidget{
+  ScrapList({Key? key}) : super(key: key);
   Widget build(BuildContext context){
-    return  Scaffold(
-        body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: FutureBuilder<List<Map<String, dynamic>>>(
-              future: _getscrapmap(),
-              builder: (context, snapshot){
-                if (snapshot.hasData){
-                  List<Map<String, dynamic>> a = snapshot.data!;
-                  return Text('$a');
-                }
-                else if (snapshot.hasError){
-                  return Text('Error: ${snapshot.error}');
-                }
-                else{
-                  return CircularProgressIndicator();
-                }
-              },
-
-            )));
+    return  Container(
+      height: double.maxFinite,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+              child: FutureBuilder<List<dynamic>>(
+                future: _getScrap(),
+                builder: (context, snapshot){
+                  if (snapshot.hasData){
+                    List myBookmaps = snapshot.data!;
+                    //print(myBookmaps.length);
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: myBookmaps[0].length,
+                      itemBuilder: (context, index){
+                        var myBookmap = myBookmaps[0][index];
+                        var mapId = myBookmap['bookMapId'];
+                        var title = myBookmap['bookMapTitle'];
+                        //print("확인!!!!!!!!! $title");
+                        var content = myBookmap['bookMapContent'];
+                        var bookmapimg = myBookmap['bookMapImage'];
+                        if (bookmapimg == null){
+                          bookmapimg = 'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832';
+                        }
+                        var keyword = myBookmap['hashTag'];
+                        var share = myBookmap['share'];
+                        return GestureDetector(
+                          onTap:(){
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ScrapDetail(myBookmap),
+                              ),
+                            );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 12.0),
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: appcolor.shade50,
+                                borderRadius: BorderRadius.all(Radius.circular(10)),
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Image.network(bookmapimg,
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.fitWidth),
+                                  Padding(padding: EdgeInsets.only(right: 10)),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                                          textAlign: TextAlign.start),
+                                      const Text(''),
+                                      Text(content, textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  else if (snapshot.hasError){
+                    return Text('Error: ${snapshot.error}');
+                  }
+                  else{
+                    return CircularProgressIndicator();
+                  }
+                },
+              )
+          ),
+    );
   }
 }
 
 Future<List<dynamic>> _getbookmap() async {
-
   final httpClient = IOClient();
   final bookmapResponse = await httpClient.get(
       Uri.parse('$bookmapKey/bookmap/1'),
@@ -249,11 +311,11 @@ Future<List<dynamic>> _getbookmap() async {
   return listData;
 }
 
-Future<List<Map<String, dynamic>>> _getscrapmap() async {
+Future<List<dynamic>> _getScrap() async {
 
   final httpClient = IOClient();
   final bookmapResponse = await httpClient.get(
-    Uri.parse('$bookmapKey/bookmap/view/1'),
+    Uri.parse('$bookmapKey/bookmap/scrap/1'),
     //headers: <String, String>{
     //  'Authorization': 'Bearer $token'
     //}
@@ -265,7 +327,7 @@ Future<List<Map<String, dynamic>>> _getscrapmap() async {
     print(bookmapTest);
   }
 
-  List<Map<String, dynamic>> listData = [bookmapTest]; // data를 리스트로 감싸기
+  List<dynamic> listData = [bookmapTest]; // data를 리스트로 감싸기
 
   return listData;
 }

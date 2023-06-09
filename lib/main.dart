@@ -57,7 +57,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   // static const TextStyle optionStyle =
   // TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    Home(token), Library(), BookMap(), Profile()
+    Home(token), Library(token), BookMap(token), Profile(token)
   ];
 
   void _onItemTapped(int index) {
