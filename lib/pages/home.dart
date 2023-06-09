@@ -134,12 +134,12 @@ class HomeStatelessWidget extends StatelessWidget{
                           if (snapshot.hasData) {
                             List<Map<String, dynamic>> dataList = snapshot.data!;
                             return Row(
-                              children: imageUrl.map((data) {
-                                dynamic img = data;
-                                List<dynamic> homeDatas = img['bookImageDto'];
-                                int num = homeDatas.length;
+                              children: dataList.map((data) {
+                                dynamic getData = data;
+                                List<dynamic> getHomeDatas = getData['bookImageDto'];
+                                int num = getHomeDatas.length;
                                 return Row(
-                                  children: homeDatas.sublist(0, num).map((homeData) {
+                                  children: getHomeDatas.sublist(0, num).map((getHomeData) {
                                     return Container(
                                       margin: EdgeInsets.only(left: 10, right: 10),
                                       child: GestureDetector(
@@ -328,4 +328,3 @@ Future<List<Map<String, dynamic>>> _fetchData() async {
 
   return listData;
 }
-
