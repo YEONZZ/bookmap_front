@@ -1,7 +1,6 @@
 import 'package:bookmap/pages/library.dart';
 import 'package:bookmap/pages/search_detail.dart';
 import 'package:flutter/foundation.dart';
-import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
@@ -52,10 +51,10 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
     if (data == null) {
       data = new List.empty(growable: true);
     }
+    //print(reData); //아직 아무것도 찍히지않음
     _editingController = new TextEditingController();
     _scrollController = new ScrollController();
     _scrollController!.addListener(() {
-
       if(_tabController.index == 0){
         if (_scrollController!.offset >=
             _scrollController!.position.maxScrollExtent &&
@@ -70,9 +69,9 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
             !_scrollController!.position.outOfRange) {
           page++;
           getBookMapData(_editingController);
-      }
-    }}
-      );
+        }
+      }}
+    );
   }
 
   bool _isLoading = false;
@@ -169,26 +168,47 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
             body: _isLoading
                 ? LoadingIndicator() //로딩중이 아닐때
                 : GestureDetector(
-                    onTap: () {
-                      _focusNode.unfocus(); //화면 터치시 키보드 내림
-                    },
-                    child: FocusScope(
-                        child: TabBarView(
-                          controller: _tabController,
-                      children: [
-                        Center(
-                          child: data!.length == 0
-                              ? Text(
-                                  '데이터가 존재하지 않습니다.\n검색해주세요',
-                                  style: TextStyle(fontSize: 20),
-                                  textAlign: TextAlign.center,
-                                )
-                              : ListView.builder(
-                                  itemBuilder: (context, index) {
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        final searchResult =
-                                            await Navigator.push(
+              onTap: () {
+                _focusNode.unfocus(); //화면 터치시 키보드 내림
+              },
+              child: FocusScope(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      Center(
+                        child: data!.length == 0
+                            ? Text(
+                          '데이터가 존재하지 않습니다.\n검색해주세요',
+                          style: TextStyle(fontSize: 20),
+                          textAlign: TextAlign.center,
+                        )
+                            : ListView.builder(
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () async {
+                                final searchResult =
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SearchDetailPage(
+                                              data: data![index])),
+                                );
+
+                                setState(() {
+                                  reData = searchResult; //SearchDetailPage값 가져오기
+                                });
+                              },
+                              child: Card(
+                                child: Container(
+                                  child: Row(
+                                    children: <Widget>[
+                                      Image.network(
+                                          data![index]['thumbnail'],
+                                          height: 120,
+                                          width: 120,
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (BuildContext
                                           context,
                                               Object exception,
                                               StackTrace? stackTrace) {
@@ -246,10 +266,11 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
                           itemCount: data!.length,
                           controller: _scrollController,
                         ),
-                        BookMapSearchScreen(_editingController!)
-                      ],
-                    )),
-                  )));
+                      ),
+                      BookMapSearchScreen(_editingController!)
+                    ],
+                  )),
+            )));
   }
 
   Future<String> getJSONData() async {
@@ -296,17 +317,18 @@ class _BookMapSearchScreen extends State<BookMapSearchScreen>{
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () async {
-              final searchResult = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        SearchDetailPage(
-                            data: data![index])),
-              );
+              // final searchResult = await Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) =>
+              //           SearchDetailPage( //북맵 상세 페이지에 대한 dart를 만들고 이로 변경해야한다.
+              //               data: data![index])),
+              // );
 
-              setState(() {
-                searchData = searchResult; //SearchDetailPage값 가져오기
-              });
+              // setState(() {
+              //   searchData = searchResult; //SearchDetailPage값 가져오기
+              // }
+              // );
             },
             child: Card(
               child: Container(
@@ -320,7 +342,7 @@ class _BookMapSearchScreen extends State<BookMapSearchScreen>{
                           return Padding(
                             padding: const EdgeInsets.all(30),
                             child: const Text('No Image',
-                                textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontSize: 11),),
+                              textAlign: TextAlign.center, style: TextStyle(color: Colors.black87, fontSize: 11),),
                           );
                         } // 대체 이미지를 반환
                     ),
@@ -394,11 +416,11 @@ Future<List> getBookMapData(editingController) async {
   print("!!!!!!!!!!!!!!!!!!!${editingController.value}");
   final httpClient = IOClient();
   final bookmapResponse = await httpClient.get(
-    Uri.parse('$bookmapKey/bookmap/search/${editingController!.value.text}'),
-    headers: <String, String>{
-      'Content-Type': 'application/json'
-    //  'Authorization': 'Bearer $token'
-    }
+      Uri.parse('$bookmapKey/bookmap/search/${editingController!.value.text}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json'
+        //  'Authorization': 'Bearer $token'
+      }
   );
   //print(response.body); // 검색 결과 로그창으로 확인
 
@@ -412,12 +434,3 @@ Future<List> getBookMapData(editingController) async {
 
   return listData;
 }
-                                
-Future<Map<String, dynamic>> _fetchISBN(kakaoIsbn) async {
-  http.Client client = http.Client();
-  final response = await client.get(Uri.parse(tmdbApiKey + '/bookdetail/4?isbn='+'${kakaoIsbn}'));
-  var searchData = jsonDecode(utf8.decode(response.bodyBytes));
-
-  return searchData;
-}
-
