@@ -23,6 +23,8 @@ dependencies:
   firebase_core: ^2.2.0
   flutterfire_ui: ^0.4.3+20
   cloud_firestore: ^4.8.0
+  scroll_date_picker : ^3.7.1
+  flutter_rating_stars: ^1.0.3+4
 
 dev_dependencies:
   flutter_test:

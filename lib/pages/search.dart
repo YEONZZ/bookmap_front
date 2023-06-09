@@ -1,6 +1,7 @@
 import 'package:bookmap/pages/library.dart';
 import 'package:bookmap/pages/search_detail.dart';
 import 'package:flutter/foundation.dart';
+import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
@@ -51,10 +52,10 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
     if (data == null) {
       data = new List.empty(growable: true);
     }
-    //print(reData); //아직 아무것도 찍히지않음
     _editingController = new TextEditingController();
     _scrollController = new ScrollController();
     _scrollController!.addListener(() {
+
       if(_tabController.index == 0){
         if (_scrollController!.offset >=
             _scrollController!.position.maxScrollExtent &&
@@ -189,83 +190,61 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
                                         final searchResult =
                                             await Navigator.push(
                                           context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  SearchDetailPage(
-                                                      data: data![index])),
-                                        );
-
-                                        setState(() {
-                                          reData = searchResult; //SearchDetailPage값 가져오기
-                                        });
-                                      },
-                                      child: Card(
-                                        child: Container(
-                                          child: Row(
-                                            children: <Widget>[
-                                              Image.network(
-                                                  data![index]['thumbnail'],
-                                                  height: 120,
-                                                  width: 120,
-                                                  fit: BoxFit.contain,
-                                                  errorBuilder: (BuildContext
-                                                          context,
-                                                      Object exception,
-                                                      StackTrace? stackTrace) {
-                                                return Padding(
-                                                  padding: const EdgeInsets.all(30),
-                                                  child: const Text('이미지없음',
-                                                      textAlign: TextAlign.center),
-                                                );
-                                              } // 대체 이미지를 반환
-                                                  ),
-                                              Column(
-                                                children: <Widget>[
-                                                  Container(
-                                                    margin: EdgeInsets.all(8),
-                                                    width:
-                                                        MediaQuery.of(context).size.width - 150,
-                                                    child: Text(
-                                                      data![index]['title'].toString(),
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontWeight: FontWeight.bold),
-                                                      textAlign: TextAlign.center,
-                                                      overflow: TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                  Container(
-                                                      margin: EdgeInsets.only(bottom: 8),
-                                                      width: MediaQuery.of(context).size.width - 150,
-                                                      child: Text(
-                                                          '저자 : ${data![index]['authors'].join(', ')}',
-                                                          style: TextStyle(
-                                                              color: Colors.black45,
-                                                              fontSize: 13),
-                                                          overflow: TextOverflow.ellipsis,
-                                                          textAlign: TextAlign.center)),
-                                                  Container(
-                                                    margin: EdgeInsets.only(bottom: 20),
-                                                    width: MediaQuery.of(context).size.width - 150,
-                                                    child: Text(data![index]['contents'].toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 12,
-                                                            color: Colors.black38),
-                                                        maxLines: 3,
-                                                        overflow: TextOverflow.ellipsis),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                          ),
-                                        ),
+                                              Object exception,
+                                              StackTrace? stackTrace) {
+                                            return Padding(
+                                              padding: const EdgeInsets.all(30),
+                                              child: const Text('이미지없음',
+                                                  textAlign: TextAlign.center),
+                                            );
+                                          } // 대체 이미지를 반환
                                       ),
-                                    );
-                                  },
-                                  itemCount: data!.length,
-                                  controller: _scrollController,
+                                      Column(
+                                        children: <Widget>[
+                                          Container(
+                                            margin: EdgeInsets.all(8),
+                                            width:
+                                            MediaQuery.of(context).size.width - 150,
+                                            child: Text(
+                                              data![index]['title'].toString(),
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          Container(
+                                              margin: EdgeInsets.only(bottom: 8),
+                                              width: MediaQuery.of(context).size.width - 150,
+                                              child: Text(
+                                                  '저자 : ${data![index]['authors'].join(', ')}',
+                                                  style: TextStyle(
+                                                      color: Colors.black45,
+                                                      fontSize: 13),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.center)),
+                                          Container(
+                                            margin: EdgeInsets.only(bottom: 20),
+                                            width: MediaQuery.of(context).size.width - 150,
+                                            child: Text(data![index]['contents'].toString(),
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.black38),
+                                                maxLines: 3,
+                                                overflow: TextOverflow.ellipsis),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                  ),
                                 ),
+                              ),
+                            );
+                          },
+                          itemCount: data!.length,
+                          controller: _scrollController,
                         ),
                         BookMapSearchScreen(_editingController!)
                       ],
@@ -433,3 +412,12 @@ Future<List> getBookMapData(editingController) async {
 
   return listData;
 }
+                                
+Future<Map<String, dynamic>> _fetchISBN(kakaoIsbn) async {
+  http.Client client = http.Client();
+  final response = await client.get(Uri.parse(tmdbApiKey + '/bookdetail/4?isbn='+'${kakaoIsbn}'));
+  var searchData = jsonDecode(utf8.decode(response.bodyBytes));
+
+  return searchData;
+}
+
