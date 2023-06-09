@@ -108,7 +108,7 @@ class HomeStatelessWidget extends StatelessWidget{
                         onPressed: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Library())
+                              MaterialPageRoute(builder: (context) => Library(token))
                           );
                         },
                         child: Text('더보기',
@@ -134,11 +134,12 @@ class HomeStatelessWidget extends StatelessWidget{
                           if (snapshot.hasData) {
                             List<Map<String, dynamic>> dataList = snapshot.data!;
                             return Row(
-                              children: dataList.map((data) {
-                                dynamic getData = data;
-                                List<dynamic> getHomeDatas = getData['bookImageDto'];
+                              children: imageUrl.map((data) {
+                                dynamic img = data;
+                                List<dynamic> homeDatas = img['bookImageDto'];
+                                int num = homeDatas.length;
                                 return Row(
-                                  children: getHomeDatas.sublist(0, 4).map((getHomeData) {
+                                  children: homeDatas.sublist(0, num).map((homeData) {
                                     return Container(
                                       margin: EdgeInsets.only(left: 10, right: 10),
                                       child: GestureDetector(
@@ -186,7 +187,7 @@ class HomeStatelessWidget extends StatelessWidget{
                         onPressed: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => BookMap())
+                              MaterialPageRoute(builder: (context) => BookMap(token))
                           );
                         },
                         child: Text('더보기',

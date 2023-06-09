@@ -14,8 +14,7 @@ class RoutesProfile{
 
   static final routesProfile = <String, WidgetBuilder>{
     logout: (BuildContext context) => Login(),
-    edit: (BuildContext context) => Edit(),
-    setting: (BuildContext context) => Setting(),
-    calendar: (BuildContext context) => MyCalendar()
+    edit: (BuildContext context) => Edit(token),
+    calendar: (BuildContext context) => MyCalendar(token)
   };
 }
