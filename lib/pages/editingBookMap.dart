@@ -61,7 +61,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
                 return Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.only(top: 35, right: 15, left: 15, bottom: 15),
+                      padding: EdgeInsets.only(top: 15, right: 15, left: 15, bottom: 15),
                       //decoration: BoxDecoration(),
                       color: Colors.orange.shade200,
                       width: double.infinity,
@@ -160,6 +160,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
                             child: ToggleButtons(
                               onPressed: toggleSelect,
                               isSelected: isSelected,
+                              fillColor: appcolor.shade100,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),

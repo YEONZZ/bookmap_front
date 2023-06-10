@@ -212,7 +212,8 @@ class Scrap extends StatelessWidget{
 class ScrapList extends StatelessWidget{
   ScrapList({Key? key}) : super(key: key);
   Widget build(BuildContext context){
-    return  Container(
+    return  Scaffold(
+      body: Container(
       height: double.maxFinite,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -287,6 +288,7 @@ class ScrapList extends StatelessWidget{
                 },
               )
           ),
+      ),
     );
   }
 }
