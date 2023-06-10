@@ -8,8 +8,17 @@ import '../api_key.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:intl/intl.dart';
 
+//초깃값 변수
+DateTime selectedStartDate = DateTime.now(); // 읽은 책 시작일
+DateTime selectedEndDate = DateTime.now(); // 읽은 책 종료일
+DateTime readingStartDate = DateTime.now(); // 읽고 있는 책 시작일 변수
+double starValue = 3.0;
+int readingPage = 0;
+int readTotalPage = 0;
+int readingTotalPage = 0;
+int memoReadingPage = 0;
+String memoContent = '';
 
-// 도서 검색 후 검색 결과 도서 터치시 연결되는 도서 상세 페이지
 
 class SearchDetailPage extends StatefulWidget {
   final dynamic searchData; //카카오 책 검색 후 받아오는 데이터
@@ -32,7 +41,8 @@ class _SearchDetailPage extends State<SearchDetailPage> {
   void initState() {
     super.initState();
     searchIsbn = searchData['isbn'];
-    print(searchData);
+    // print(searchData);
+    // print(searchData['title']);
   }
 
   @override
@@ -62,16 +72,208 @@ class _SearchDetailPage extends State<SearchDetailPage> {
                 icon: Icon(Icons.add_box, color: appcolor.shade600,),
                 onSelected: (value) {
                   if (value == 1) { //북맵 저장 버튼 터치
-                    _handleSaveBookmark(context, searchIsbn);
+                    var selectedScreen = '';
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return StatefulBuilder(
+                          builder: (BuildContext context, StateSetter setState) {
+                            return FractionallySizedBox(
+                              widthFactor: 1.0,
+                              heightFactor: 0.9,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                            child: Text(
+                                              '어떤 책인가요?',
+                                              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                          Container(
+                                            margin: EdgeInsets.only(top: 10),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    String result = await _postData(selectedScreen, searchIsbn);
+                                                    if(result.isNotEmpty) { //post성공시
+                                                      print('post 성공');
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext context) {
+                                                          return AlertDialog(
+                                                            title: Text('저장'),
+                                                            content: Text('저장 되었습니다.'),
+                                                            actions: [
+                                                              TextButton(
+                                                                onPressed: () {
+                                                                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                                                                },
+                                                                child: Text('확인'),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      );
+                                                    }
+                                                  },
+                                                  child: Text(
+                                                    '저장',
+                                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: appcolor.shade700),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ), //상단부
+                                    Container(
+                                      margin: EdgeInsets.only(top: 5, left: 5, right: 5),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              margin: EdgeInsets.only(right: 5),
+                                              width: 80,
+                                              height: 100,
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedScreen = '읽은';
+                                                    print('상태: $selectedScreen');
+                                                  });
+                                                },
+                                                style: TextButton.styleFrom(
+                                                  shape: const RoundedRectangleBorder(
+                                                    side: BorderSide(color: Colors.black26),
+                                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                  ),
+                                                  backgroundColor: Colors.white,
+                                                ),
+                                                child: Container(
+                                                  child:
+                                                  Text(
+                                                    '읽은 책',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              //margin: EdgeInsets.only(left:5, right: 5),
+                                              width: 80,
+                                              height: 100,
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedScreen = '읽는중인';
+                                                    print('상태: $selectedScreen');
+                                                  });
+                                                },
+                                                style: TextButton.styleFrom(
+                                                  shape: const RoundedRectangleBorder(
+                                                    side: BorderSide(color: Colors.black26),
+                                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                  ),
+                                                  backgroundColor: Colors.white,
+                                                ),
+                                                child: Container(
+                                                  child: Text(
+                                                    '읽고 있는 책',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Container(
+                                              margin: EdgeInsets.only(left: 5),
+                                              width: 80,
+                                              height: 100,
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    selectedScreen = '읽고싶은';
+                                                    print('상태: $selectedScreen');
+                                                  });
+                                                },
+                                                style: TextButton.styleFrom(
+                                                  shape: const RoundedRectangleBorder(
+                                                    side: BorderSide(color: Colors.black26),
+                                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                  ),
+                                                  backgroundColor: Colors.white,
+                                                ),
+                                                child: Container(
+                                                  child: Text(
+                                                    '읽고 싶은 책',
+                                                    style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container( //버튼별로 선택한 화면 출력
+                                      margin: EdgeInsets.only(top: 10),
+                                      child: BookScreen(selectedScreen: selectedScreen,),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
                   } else if (value == 2) { // 메모 저장 버튼 터치
-
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('알림'),
+                          content: Text('도서 저장 후 메모를 추가해주세요.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(); // 다이얼로그 닫기
+                              },
+                              child: Text('확인',style: TextStyle(color: appcolor.shade700),),
+                            ),
+                          ],
+                        );
+                      },
+                    );
                   }
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                  PopupMenuItem(
-                    value: 1,
-                    child: Text('책 저장'),
-                  ),
+                  PopupMenuItem(value: 1, child: Text('책 저장'),),
                   PopupMenuDivider(),
                   PopupMenuItem(value: 2, child: Text('메모 추가')),
                 ],
@@ -130,40 +332,8 @@ class _SearchDetailPage extends State<SearchDetailPage> {
                     ],
                   ),
                 ),
-                Container( //날짜 컨테이너
-                  padding: EdgeInsets.only(left: 10, right: 10, top: 15),
-                  height: 30,
-                  child: Row(
-                    children: [
-                      Expanded(
-                          flex: 10,
-                          child: Text('2023.05.02 로부터 ${diff.inDays.toString()}일째 읽고 있어요!',
-                            style: TextStyle(fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),)
-                      ),
-                      Text('수정',
-                          style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-                  child: new LinearPercentIndicator(
-                    width: MediaQuery.of(context).size.width - 20,
-                    animation: false,
-                    lineHeight: 20.0,
-                    animationDuration: 2000,
-                    percent: 0.15,
-                    center: Text("15.0%"),
-                    barRadius: const Radius.circular(16),
-                    progressColor: appcolor,
-                    backgroundColor: Color(0x7FD8D8D8),
-                  ),
-                ),
                 Container( //북맵 알려주는 컨테이너
-                  padding: EdgeInsets.only(left: 10, right: 10, top: 15),
+                  padding: EdgeInsets.only(left: 10, right: 10, top: 5, ),
                   height: 30,
                   child: Row(
                     children: [
@@ -248,12 +418,6 @@ class _SearchDetailPage extends State<SearchDetailPage> {
                         tabs: [Tab(text: '책 정보'), Tab(text: '나의 메모')],
                         indicator: BoxDecoration(
                           color: appcolor,
-                          // border: Border(
-                          //   bottom: BorderSide(
-                          //     color: appcolor.shade700, //외곽선,
-                          //     width: 1.0,
-                          //   ),
-                          // )
                         ),
                         unselectedLabelColor: Colors.black,
                       ),
@@ -354,21 +518,15 @@ class _SearchDetailPage extends State<SearchDetailPage> {
                               //여기까지 책정보 탭
                               //여기서부터 나의메모 탭
                               Container(
-                                margin: EdgeInsets.only(top: 10),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(left: 10, right: 10),
-                                      width: MediaQuery.of(context).size.width,
-                                      height:MediaQuery.of(context).size.height * 0.08,
-                                      decoration: BoxDecoration(
-                                        color: appcolor.shade50,
-                                        borderRadius: BorderRadius.all(Radius.circular(16)),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      '도서 저장 후 메모를 추가해주세요.',
+                                      style: TextStyle(
+                                        fontSize: 16,
                                       ),
-                                      child: Center(child: Text('이 책 정말 재밌을 것 같다!')),
-                                    )
-                                  ],
-                                ),
+                                    ),
+                                  )
                               ),
                             ]
                         ),
@@ -383,218 +541,94 @@ class _SearchDetailPage extends State<SearchDetailPage> {
       ),
     );
   }
-}
 
 
+  Future<String> _postData(String selectedScreen, String searchIsbn) async {
+    String bookState = '';
 
+    try {
+      if (selectedScreen == '읽은') {
+        bookState = '읽은';
 
+        print('상태: $bookState');
+        print('시작일: ${selectedStartDate}');
+        print('종료일: ${selectedEndDate}');
+        print('별점: ${starValue}');
+        print('총페이지수: ${readTotalPage}');
 
-var selectedScreen = '';
-void _handleSaveBookmark(BuildContext context, searchIsbn) {
-  showModalBottomSheet(
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(
-        builder: (BuildContext context, StateSetter setState) {
-          return FractionallySizedBox(
-            widthFactor: 1.0,
-            heightFactor: 0.8,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: Text(
-                            '어떤 책인가요?',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  final bookScreenState = context.findAncestorStateOfType<BookScreenState>();
-                                  if (bookScreenState != null) {
-                                    bookScreenState._postData(selectedScreen, searchIsbn);
-                                  }
-                                },
-                                child: Text(
-                                  '저장',
-                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: appcolor.shade700),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ), //상단부
-                  Container(
-                    margin: EdgeInsets.only(top: 10, left: 5, right: 5),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            margin: EdgeInsets.only(left:5, right: 10),
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedScreen = '읽은';
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.black26),
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                ),
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Container(
-                                width: double.infinity, // 텍스트 버튼 너비 설정
-                                height: 80, // 텍스트 버튼 높이 설정
-                                child: Column(
-                                  children: [
-                                    Padding(padding: EdgeInsets.only(top: 5)),
-                                    Text(
-                                      '읽은 책',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            margin: EdgeInsets.only(right: 10),
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedScreen = '읽는중인';
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.black26),
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                ),
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Container(
-                                width: double.infinity, // 텍스트 버튼 너비 설정
-                                height: 80, // 텍스트 버튼 높이 설정
-                                child: Column(
-                                  children: [
-                                    Padding(padding: EdgeInsets.only(top: 5)),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '읽고 있는 책',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            margin: EdgeInsets.only(right: 5),
-                            child: TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  selectedScreen = '읽고싶은';
-                                });
-                              },
-                              style: TextButton.styleFrom(
-                                shape: const RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.black26),
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                                ),
-                                backgroundColor: Colors.white,
-                              ),
-                              child: Container(
-                                width: double.infinity, // 텍스트 버튼 너비 설정
-                                height: 80, // 텍스트 버튼 높이 설정
-                                child: Column(
-                                  children: [
-                                    Padding(padding: EdgeInsets.only(top: 5)),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '읽고 싶은 책',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container( //버튼별로 선택한 화면 출력
-                    margin: EdgeInsets.only(top: 10),
-                    child: BookScreen( //초깃값은 '읽은' 으로 설정
-                      selectedScreen: '읽은',
-                      initialStartDate: DateTime.now(),
-                      initialEndDate: DateTime.now(),
-                      initialStarValue: 3.0,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
+        final bodyData = {
+          'bookState': bookState,
+          'startDate': DateFormat('yyyy-MM-dd').format(selectedStartDate),
+          'endDate': DateFormat('yyyy-MM-dd').format(selectedEndDate),
+          'grade': starValue.toString(),
+          'totalPage': readTotalPage.toString(),
+        };
+
+        final response = await http.post(
+          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${searchIsbn}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(bodyData),
+        );
+
+        return response.body;
+      } else if (selectedScreen == '읽는중인') {
+        bookState = '읽는중인';
+
+        print('상태: $bookState');
+        print('총페이지수: ${readingTotalPage}');
+        print('읽은페이지: ${readingPage}');
+        print('시작일: ${readingStartDate}');
+
+        final bodyData = {
+          'bookState': bookState,
+          'totalPage': readingTotalPage.toString(),
+          'readingPage': readingPage,
+          'startDate': DateFormat('yyyy-MM-dd').format(readingStartDate),
+        };
+
+        final response = await http.post(
+          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${searchIsbn}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(bodyData),
+        );
+
+        return response.body;
+      } else if (selectedScreen == '읽고싶은') {
+        bookState = '읽고싶은';
+        print('상태: $bookState');
+
+        final bodyData = {
+          'bookState': bookState,
+        };
+
+        final response = await http.post(
+          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${searchIsbn}'),
+          headers: <String, String>{
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode(bodyData),
+        );
+
+        return response.body;
+      }
+
+      return ''; // 선택한 상태가 없을 경우 빈 문자열 반환
+    } catch (e) {
+      return 'Error: $e';
+    }
+  }
+
+} //SearchDetail 끝
 
 class BookScreen extends StatefulWidget {
   final String selectedScreen;
-  final DateTime initialStartDate;
-  final DateTime initialEndDate;
-  final double initialStarValue;
 
   BookScreen({
     required this.selectedScreen,
-    required this.initialStartDate,
-    required this.initialEndDate,
-    required this.initialStarValue,
   });
 
   @override
@@ -602,20 +636,15 @@ class BookScreen extends StatefulWidget {
 }
 
 class BookScreenState extends State<BookScreen> {
-  DateTime selectedStartDate = DateTime.now(); // 읽은 책 시작일
-  DateTime selectedEndDate = DateTime.now(); //  읽은 책 종료일
-  DateTime readingStartDate = DateTime.now(); //읽고있는 책 시작일 변수
-  double starValue = 3.0;
-  int readingPage = 0;
-
   void initState() {
     super.initState();
-    selectedStartDate = widget.initialStartDate; // 생성자에서 초기화
-    selectedEndDate = widget.initialEndDate; // 생성자에서 초기화
-    starValue = widget.initialStarValue; // 생성자에서 초기화
-    // print(selectedStartDate);
-    // print(selectedEndDate);
-    // print(starValue);
+    selectedStartDate = DateTime.now(); // 읽은 책 시작일
+    selectedEndDate = DateTime.now(); // 읽은 책 종료일
+    readingStartDate = DateTime.now(); // 읽고 있는 책 시작일 변수
+    starValue = 3.0;
+    readingPage = 0;
+    readTotalPage = 0;
+    readingTotalPage = 0;
   }
 
   void onSaveButtonPressed(DateTime selectedDate, String dateType) {
@@ -629,66 +658,6 @@ class BookScreenState extends State<BookScreen> {
       }
       Navigator.pop(context);
     });
-  }
-
-  Future<String> _postData(String selectedScreen, String searchIsbn) async {
-    String bookState = '';
-    if (selectedScreen == '읽은') {
-      bookState = '읽은';
-
-      final bodyData = {
-        'bookState': bookState,
-        'startDate': DateFormat('yyyy-MM-dd').format(selectedStartDate),
-        'endDate':DateFormat('yyyy-MM-dd').format(selectedEndDate),
-        'grade': starValue.toString(),
-      };
-
-      final response = await http.post(
-        Uri.parse(tmdbApiKey + '/book/save/4?isbn=' + '${searchIsbn}'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(bodyData),
-      );
-
-      return response.body;
-    } else if (selectedScreen == '읽는중인') {
-      bookState = '읽는중인';
-
-      final bodyData = {
-        'bookState': bookState,
-        'readingPage': readingPage,
-        'startDate': readingStartDate.toString(),
-      };
-
-      final response = await http.post(
-        Uri.parse(tmdbApiKey + '/book/save/4?isbn=' + '${searchIsbn}'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(bodyData),
-      );
-
-      return response.body;
-    } else if (selectedScreen == '읽고싶은') {
-      bookState = '읽고싶은';
-
-      final bodyData = {
-        'bookState': bookState,
-      };
-
-      final response = await http.post(
-        Uri.parse(tmdbApiKey + '/book/save/4?isbn=' + '${searchIsbn}'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(bodyData),
-      );
-
-      return response.body;
-    }
-
-    return ''; // 선택한 상태가 없을 경우 빈 문자열 반환
   }
 
   @override
@@ -758,6 +727,7 @@ class BookScreenState extends State<BookScreen> {
                                       onDateTimeChanged: (DateTime value) {
                                         setState(() {
                                           selectedStartDate = value;
+                                          print('시작일: $selectedStartDate');
                                         });
                                       },
                                     ),
@@ -867,6 +837,7 @@ class BookScreenState extends State<BookScreen> {
                                       onDateTimeChanged: (DateTime value) {
                                         setState(() {
                                           selectedEndDate = value;
+                                          print('종료일: $selectedEndDate');
                                         });
                                       },
                                     ),
@@ -927,53 +898,121 @@ class BookScreenState extends State<BookScreen> {
                 ],
               ),
             ), //종료일 컨테이너 끝
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    margin: EdgeInsets.only(left: 10,),
-                    child: Text('평점을 남겨 주세요!',
-                      style: TextStyle(color: Colors.black, fontSize: 16, ),
-                    ),
-                  ),
-                ), //평점 텍스트 끝
-                Expanded(
-                  child: Container( //별 컨테이너
-                    child: RatingStars(
-                      value: starValue,
-                      onValueChanged: (v){
-                        setState(() {
-                          starValue = v;
-                        });
-                      },
-                      starBuilder: (index, color) => Icon(
-                        Icons.star,
-                        color: color,
-                        size: 35,
+            Container(
+              margin: EdgeInsets.only(left: 10, bottom: 5),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  '총 페이지 수',
+                  style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+              height: MediaQuery.of(context).size.height * 0.04,
+              decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1.0,
+                    color: appcolor.shade900,
+                  )
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 5),
+                      child: Text(
+                        '페이지 수',
+                        style: TextStyle(color: Colors.black, fontSize: 16,),
                       ),
-                      starCount: 5,
-                      starSize: 30, //별 사이 간격
-                      valueLabelColor: const Color(0xff9b9b9b),
-                      valueLabelTextStyle: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w400,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 12.0,),
-                      valueLabelRadius: 10,
-                      maxValue: 5,
-                      starSpacing: 1,
-                      maxValueVisibility: true,
-                      valueLabelVisibility: true,
-                      animationDuration: Duration(milliseconds: 1000),
-                      valueLabelPadding:
-                      const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-                      valueLabelMargin: const EdgeInsets.only(right: 8),
-                      starOffColor: const Color(0xffe7e8ea),
-                      starColor: Colors.yellow,
                     ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.only(top: 16.5),
+                          width: 50,
+                          child: TextField(
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              hintText: '0',
+                              border: InputBorder.none,
+                            ),
+                            style: TextStyle(color: Colors.black, fontSize: 16,),
+                            onChanged: (value) {
+                              setState(() {
+                                readTotalPage = int.parse(value);
+                                print('총 페이지수: $readTotalPage');
+                              });
+                            },
+                            textAlign: TextAlign.right,
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(right: 5),
+                          child: Text(
+                            ' 쪽',
+                            style: TextStyle(color: Colors.black, fontSize: 16,),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container( //평점 컨테이너
+              margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container( //텍스트 컨테이너
+                      child: Text('평점을 남겨 주세요!',
+                        style: TextStyle(color: Colors.black, fontSize: 16, ),
+                      ),
+                    ),
+                  ), //평점 텍스트 끝
+                  Expanded(
+                    child: Container( //별 컨테이너
+                      child: RatingStars(
+                        value: starValue,
+                        onValueChanged: (v){
+                          setState(() {
+                            starValue = v;
+                            print('별점: $starValue');
+                          });
+                        },
+                        starBuilder: (index, color) => Icon(
+                          Icons.star,
+                          color: color,
+                          size: 35,
+                        ),
+                        starCount: 5,
+                        starSize: 30, //별 사이 간격
+                        valueLabelColor: const Color(0xff9b9b9b),
+                        valueLabelTextStyle: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w400,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 12.0,),
+                        valueLabelRadius: 10,
+                        maxValue: 5,
+                        starSpacing: 1,
+                        maxValueVisibility: true,
+                        valueLabelVisibility: true,
+                        animationDuration: Duration(milliseconds: 1000),
+                        valueLabelPadding:
+                        const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                        valueLabelMargin: const EdgeInsets.only(right: 8),
+                        starOffColor: const Color(0xffe7e8ea),
+                        starColor: Colors.yellow,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -981,6 +1020,71 @@ class BookScreenState extends State<BookScreen> {
     } else if (widget.selectedScreen == '읽는중인') {
       return Column(
         children: [
+          Container( //총페이지 수 입력 컨테이너
+            margin: EdgeInsets.only(left: 10, bottom: 5),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '총 페이지 수',
+                style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            height: MediaQuery.of(context).size.height * 0.04,
+            decoration: BoxDecoration(
+                border: Border.all(
+                  width: 1.0,
+                  color: appcolor.shade900,
+                )
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 5),
+                    child: Text(
+                      '페이지 수',
+                      style: TextStyle(color: Colors.black, fontSize: 16,),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.only(top: 16.5),
+                        width: 50,
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: '0',
+                            border: InputBorder.none,
+                          ),
+                          style: TextStyle(color: Colors.black, fontSize: 16,),
+                          onChanged: (value) {
+                            setState(() {
+                              readingTotalPage = int.parse(value);
+                              print('총 페이지수: $readingTotalPage');
+                            });
+                          },
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(right: 5),
+                        child: Text(
+                          ' 쪽',
+                          style: TextStyle(color: Colors.black, fontSize: 16,),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           Container(
             margin: EdgeInsets.only(left: 10, bottom: 5),
             child: Align(
@@ -1021,6 +1125,7 @@ class BookScreenState extends State<BookScreen> {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                             hintText: '0',
+                            border: InputBorder.none,
                           ),
                           style: TextStyle(color: Colors.black, fontSize: 16,),
                           onChanged: (value) {
@@ -1104,6 +1209,7 @@ class BookScreenState extends State<BookScreen> {
                                     onDateTimeChanged: (DateTime value) {
                                       setState(() {
                                         readingStartDate = value;
+                                        print('시작일: $readingStartDate');
                                       });
                                     },
                                   ),
@@ -1133,7 +1239,6 @@ class BookScreenState extends State<BookScreen> {
                                           child: TextButton(
                                             onPressed: () {
                                               setState(() {
-                                                final savedReadingStartDate = readingStartDate; //값 저장
                                               });
                                               Navigator.pop(context);
                                             },
@@ -1182,4 +1287,5 @@ class BookScreenState extends State<BookScreen> {
     }
   }
 }
+
 

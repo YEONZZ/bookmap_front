@@ -16,11 +16,9 @@ import 'library.dart';
 
 final imageList = [
   Image.network(
-      'https://shopping-phinf.pstatic.net/main_3839015/38390159619.20230502161943.jpg?type=w300', fit: BoxFit.fitWidth),
+      'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832', fit: BoxFit.fitWidth),
   Image.network(
-      'https://shopping-phinf.pstatic.net/main_3250610/32506106882.20221229070913.jpg?type=w300', fit: BoxFit.fitWidth),
-  Image.network(
-      'https://shopping-phinf.pstatic.net/main_3250515/32505158692.20220527055317.jpg?type=w300', fit: BoxFit.fitWidth),
+      'https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F1467038%3Ftimestamp%3D20230128141840', fit: BoxFit.fitWidth),
 ];
 
 void main() {
@@ -132,6 +130,7 @@ class HomeStatelessWidget extends StatelessWidget{
                         future: _fetchData(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            //print('토큰: $token');
                             List<Map<String, dynamic>> dataList = snapshot.data!;
                             return Row(
                               children: dataList.map((data) {
@@ -309,13 +308,12 @@ class HomeStatelessWidget extends StatelessWidget{
 }
 
 Future<List<Map<String, dynamic>>> _fetchData() async {
-
   final httpClient = IOClient();
   final userResponse = await httpClient.get(
-    Uri.parse('$logApiKey/main'),
-    headers: <String, String>{
-      'Authorization': 'Bearer $token'
-    });
+      Uri.parse('$logApiKey/main'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
   //
   // if (kDebugMode) {
   //   print('확인!!!!:$token');
@@ -323,8 +321,6 @@ Future<List<Map<String, dynamic>>> _fetchData() async {
   var usertest = jsonDecode(utf8.decode(userResponse.bodyBytes));
   // final response = await client.get(Uri.parse(tmdbApiKey + '/main/4'));
   // var data = jsonDecode(utf8.decode(response.bodyBytes));
-
   List<Map<String, dynamic>> listData = [usertest]; // data를 리스트로 감싸기
-
   return listData;
 }

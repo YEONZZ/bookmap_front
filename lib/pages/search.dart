@@ -1,4 +1,5 @@
 import 'package:bookmap/pages/search_detail.dart';
+import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +31,6 @@ class HttpApp extends StatefulWidget {
 }
 
 class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
-  String reData = '';
   late TabController _tabController;
   late TextEditingController? _editingController;
   ScrollController? _scrollController;
@@ -183,22 +183,30 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
                         )
                             : ListView.builder(
                           itemBuilder: (context, index) {
+                            String kakaoIsbn = data![index]['isbn'];
                             return GestureDetector(
                               onTap: () async {
-                                final searchResult =
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SearchDetailPage(
-                                              // data: data![index]
-                                            )
-                                  ),
-                                );
-
-                                setState(() {
-                                  reData = searchResult; //SearchDetailPage값 가져오기
-                                });
+                                var check = await trueFalse(kakaoIsbn);
+                                //print('확인: $check');
+                                if(check){
+                                  //print('확인용');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SearchDetailGetPage(homeIsbn: kakaoIsbn,),
+                                    ),
+                                  );
+                                } else {
+                                  var searchData = await _fetchISBN(kakaoIsbn);
+                                  //print('카카오isbn: ${kakaoIsbn}');
+                                  //print('검색결과: ${searchData}');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SearchDetailPage(searchData: searchData),
+                                    ),
+                                  );
+                                }
                               },
                               child: Card(
                                 child: Container(
@@ -434,4 +442,20 @@ Future<List> getBookMapData(editingController) async {
   List<dynamic> listData = [bookmapList]; // data를 리스트로 감싸기
 
   return listData;
+}
+
+Future<Map<String, dynamic>> _fetchISBN(kakaoIsbn) async {
+  http.Client client = http.Client();
+  final response = await client.get(Uri.parse(tmdbApiKey + '/bookdetail/1?isbn='+'${kakaoIsbn}'));
+  var searchData = jsonDecode(utf8.decode(response.bodyBytes));
+
+  return searchData;
+}
+
+Future<bool> trueFalse(kakaoIsbn) async {
+  http.Client client = http.Client();
+  final response = await client.get(Uri.parse(tmdbApiKey + '/book/savedornot/1?isbn='+'${kakaoIsbn}'));
+  var data = jsonDecode(utf8.decode(response.bodyBytes));
+
+  return data;
 }
