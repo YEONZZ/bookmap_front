@@ -1,4 +1,3 @@
-import 'package:bookmap/pages/library.dart';
 import 'package:bookmap/pages/search_detail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -192,7 +191,9 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           SearchDetailPage(
-                                              data: data![index])),
+                                              // data: data![index]
+                                            )
+                                  ),
                                 );
 
                                 setState(() {

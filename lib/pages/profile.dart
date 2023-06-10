@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:bookmap/design/color.dart';
 import 'package:bookmap/routes/profile_routes.dart';
 import 'package:http/io_client.dart';
 
+import 'dart:convert';
 import '../api_key.dart';
 import '../login.dart';
 
