@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:bookmap/main.dart';
+import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:flutter/material.dart';
 import 'package:bookmap/design/color.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -8,11 +10,13 @@ import '../api_key.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:intl/intl.dart';
 
+import '../login.dart';
+
 //초깃값 변수
 DateTime selectedStartDate = DateTime.now(); // 읽은 책 시작일
 DateTime selectedEndDate = DateTime.now(); // 읽은 책 종료일
 DateTime readingStartDate = DateTime.now(); // 읽고 있는 책 시작일 변수
-double starValue = 3.0;
+double starValue = 3;
 int readingPage = 0;
 int readTotalPage = 0;
 int readingTotalPage = 0;
@@ -71,7 +75,7 @@ class _SearchDetailPage extends State<SearchDetailPage> {
               PopupMenuButton(
                 icon: Icon(Icons.add_box, color: appcolor.shade600,),
                 onSelected: (value) {
-                  if (value == 1) { //북맵 저장 버튼 터치
+                  if (value == 1) { //책 저장 버튼 터치
                     var selectedScreen = '';
                     showModalBottomSheet(
                       context: context,
@@ -115,15 +119,21 @@ class _SearchDetailPage extends State<SearchDetailPage> {
                                                             actions: [
                                                               TextButton(
                                                                 onPressed: () {
-                                                                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                                                                  // 책 저장후 searchDetailGetPage로 이동
+                                                                  Navigator.pushReplacement(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (BuildContext context) => MyApp(token), //임시로 이동
+                                                                    ),
+                                                                  );
                                                                 },
-                                                                child: Text('확인'),
+                                                                child: Text('확인', style: TextStyle(color: appcolor.shade700),),
                                                               ),
                                                             ],
                                                           );
                                                         },
                                                       );
-                                                    }
+                                                    } else {print('post실패');}
                                                   },
                                                   child: Text(
                                                     '저장',
@@ -571,19 +581,19 @@ class _SearchDetailPage extends State<SearchDetailPage> {
           },
           body: jsonEncode(bodyData),
         );
-
+        print('확인용: ${response.body}');
         return response.body;
       } else if (selectedScreen == '읽는중인') {
         bookState = '읽는중인';
 
         print('상태: $bookState');
-        print('총페이지수: ${readingTotalPage}');
+        print('총페이지수: ${readTotalPage}');
         print('읽은페이지: ${readingPage}');
         print('시작일: ${readingStartDate}');
 
         final bodyData = {
           'bookState': bookState,
-          'totalPage': readingTotalPage.toString(),
+          'totalPage': readTotalPage.toString(),
           'readingPage': readingPage,
           'startDate': DateFormat('yyyy-MM-dd').format(readingStartDate),
         };
@@ -595,6 +605,7 @@ class _SearchDetailPage extends State<SearchDetailPage> {
           },
           body: jsonEncode(bodyData),
         );
+        print('확인용: ${response.body}');
 
         return response.body;
       } else if (selectedScreen == '읽고싶은') {
@@ -612,7 +623,7 @@ class _SearchDetailPage extends State<SearchDetailPage> {
           },
           body: jsonEncode(bodyData),
         );
-
+        print('확인용: ${response.body}');
         return response.body;
       }
 
@@ -644,7 +655,6 @@ class BookScreenState extends State<BookScreen> {
     starValue = 3.0;
     readingPage = 0;
     readTotalPage = 0;
-    readingTotalPage = 0;
   }
 
   void onSaveButtonPressed(DateTime selectedDate, String dateType) {
@@ -776,7 +786,7 @@ class BookScreenState extends State<BookScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: Text(
-                            '${selectedStartDate.year}년 ${selectedStartDate.month}월 ${selectedStartDate.day}일',
+                            '${selectedStartDate.year}-${selectedStartDate.month}-${selectedStartDate.day}',
                             style: TextStyle(color: Colors.black, fontSize: 16,),
                           ),
                         ),
@@ -888,7 +898,7 @@ class BookScreenState extends State<BookScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: Text(
-                            '${selectedEndDate.year}년 ${selectedEndDate.month}월 ${selectedEndDate.day}일',
+                            '${selectedEndDate.year}-${selectedEndDate.month}-${selectedEndDate.day}',
                             style: TextStyle(color: Colors.black, fontSize: 16,),
                           ),
                         ),
@@ -1065,8 +1075,8 @@ class BookScreenState extends State<BookScreen> {
                           style: TextStyle(color: Colors.black, fontSize: 16,),
                           onChanged: (value) {
                             setState(() {
-                              readingTotalPage = int.parse(value);
-                              print('총 페이지수: $readingTotalPage');
+                              readTotalPage = int.parse(value);
+                              print('총 페이지수: $readTotalPage');
                             });
                           },
                           textAlign: TextAlign.right,
@@ -1262,7 +1272,7 @@ class BookScreenState extends State<BookScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 5),
                         child: Text(
-                          '${readingStartDate.year}년 ${readingStartDate.month}월 ${readingStartDate.day}일',
+                          '${readingStartDate.year}-${readingStartDate.month}-${readingStartDate.day}',
                           style: TextStyle(color: Colors.black, fontSize: 16,),
                         ),
                       ),
