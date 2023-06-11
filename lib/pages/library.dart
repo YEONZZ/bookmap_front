@@ -83,7 +83,7 @@ class _FirstPage extends State<FirstPage> {
         ),
         body: TabBarView(
           children: [
-            FutureBuilder<List<dynamic>>(
+            FutureBuilder<List<dynamic>>( //전체 탭
               future: _fetchData(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
@@ -110,7 +110,7 @@ class _FirstPage extends State<FirstPage> {
                           );
                         },
                         child: Container(
-                            margin: EdgeInsets.only(top: 10),
+                            margin: EdgeInsets.only(left:10, right: 10, top: 10),
                             width: MediaQuery.of(context).size.width - 20,
                             height: MediaQuery.of(context).size.height * 0.2,
                             decoration: BoxDecoration(
@@ -146,22 +146,22 @@ class _FirstPage extends State<FirstPage> {
                                           style: TextStyle(
                                               color: Colors.black45,
                                               fontSize: 13,
-                                              fontWeight: FontWeight.w100)),
+                                              fontWeight: FontWeight.w500)),
                                       Padding(padding: EdgeInsets.only(top: 15)),
                                       Text(
-                                          '$grade',
+                                          '별점: $grade',
                                           textAlign: TextAlign.start,
                                           style: TextStyle(
                                               fontSize: 12,
-                                              fontWeight: FontWeight.w100)),
+                                              fontWeight: FontWeight.w300)),
                                       Padding(padding: EdgeInsets.only(top: 5)),
                                       Text(
                                           '시작일: ${startDate}, 완독일: ${endDate}',
                                           textAlign: TextAlign.start,
                                           style: TextStyle(
                                               color: Colors.black54,
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w100))
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w400))
                                     ],
                                   ),
                                 )
@@ -201,7 +201,6 @@ class _FirstPage extends State<FirstPage> {
                       var endDate = book['endDate'];
                       var isbn = book['isbn'];
                       var grade = book['grade'];
-                      var bookState = book['bookState'];
                         return GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -212,7 +211,7 @@ class _FirstPage extends State<FirstPage> {
                             );
                           },
                           child: Container(
-                            margin: EdgeInsets.only(top: 10),
+                            margin: EdgeInsets.only(left:10, right: 10, top: 10),
                             width: MediaQuery.of(context).size.width - 20,
                             height: MediaQuery.of(context).size.height * 0.2,
                             decoration: BoxDecoration(
@@ -251,16 +250,16 @@ class _FirstPage extends State<FirstPage> {
                                         style: TextStyle(
                                           color: Colors.black45,
                                           fontSize: 13,
-                                          fontWeight: FontWeight.w100,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       Padding(padding: EdgeInsets.only(top: 15)),
                                       Text(
-                                        '$grade',
+                                        '별점: $grade',
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
                                           fontSize: 12,
-                                          fontWeight: FontWeight.w100,
+                                          fontWeight: FontWeight.w300,
                                         ),
                                       ),
                                       Padding(padding: EdgeInsets.only(top: 5)),
@@ -269,8 +268,8 @@ class _FirstPage extends State<FirstPage> {
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
                                           color: Colors.black54,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w100,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
                                         ),
                                       ),
                                     ],
@@ -295,7 +294,7 @@ class _FirstPage extends State<FirstPage> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List books = snapshot.data ?? [];
-                  // "읽은" 도서들만 추려내는 작업
+                  // "읽고 있는" 도서들만 추려내는 작업
                   List<Map<String, dynamic>> readBooks = [];
                   for (var book in books) {
                     var bookState = book['bookState'];
@@ -311,10 +310,8 @@ class _FirstPage extends State<FirstPage> {
                       var title = book['title'];
                       var author = book['author'];
                       var startDate = book['startDate'];
-                      var endDate = book['endDate'];
                       var isbn = book['isbn'];
                       var grade = book['grade'];
-                      var bookState = book['bookState'];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -325,7 +322,7 @@ class _FirstPage extends State<FirstPage> {
                           );
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: EdgeInsets.only(left:10, right: 10, top: 10),
                           width: MediaQuery.of(context).size.width - 20,
                           height: MediaQuery.of(context).size.height * 0.2,
                           decoration: BoxDecoration(
@@ -364,12 +361,12 @@ class _FirstPage extends State<FirstPage> {
                                       style: TextStyle(
                                         color: Colors.black45,
                                         fontSize: 13,
-                                        fontWeight: FontWeight.w100,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                     Padding(padding: EdgeInsets.only(top: 15)),
                                     Text(
-                                      '$grade',
+                                      '$grade', //퍼센테이지로 변경
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                         fontSize: 12,
@@ -378,12 +375,12 @@ class _FirstPage extends State<FirstPage> {
                                     ),
                                     Padding(padding: EdgeInsets.only(top: 5)),
                                     Text(
-                                      '시작일: $startDate, 완독일: $endDate',
+                                      '시작일: $startDate',
                                       textAlign: TextAlign.start,
                                       style: TextStyle(
                                         color: Colors.black54,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w100,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
                                   ],
@@ -408,7 +405,7 @@ class _FirstPage extends State<FirstPage> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List books = snapshot.data ?? [];
-                  // "읽은" 도서들만 추려내는 작업
+                  // "읽고싶은" 도서들만 추려내는 작업
                   List<Map<String, dynamic>> readBooks = [];
                   for (var book in books) {
                     var bookState = book['bookState'];
@@ -423,11 +420,7 @@ class _FirstPage extends State<FirstPage> {
                       var img = book['image'];
                       var title = book['title'];
                       var author = book['author'];
-                      var startDate = book['startDate'];
-                      var endDate = book['endDate'];
                       var isbn = book['isbn'];
-                      var grade = book['grade'];
-                      var bookState = book['bookState'];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -438,7 +431,7 @@ class _FirstPage extends State<FirstPage> {
                           );
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 10),
+                          margin: EdgeInsets.only(left:10, right: 10, top: 10),
                           width: MediaQuery.of(context).size.width - 20,
                           height: MediaQuery.of(context).size.height * 0.2,
                           decoration: BoxDecoration(
@@ -477,26 +470,7 @@ class _FirstPage extends State<FirstPage> {
                                       style: TextStyle(
                                         color: Colors.black45,
                                         fontSize: 13,
-                                        fontWeight: FontWeight.w100,
-                                      ),
-                                    ),
-                                    Padding(padding: EdgeInsets.only(top: 15)),
-                                    Text(
-                                      '$grade',
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w100,
-                                      ),
-                                    ),
-                                    Padding(padding: EdgeInsets.only(top: 5)),
-                                    Text(
-                                      '시작일: $startDate, 완독일: $endDate',
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        color: Colors.black54,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w100,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ],
@@ -533,7 +507,7 @@ class _FirstPage extends State<FirstPage> {
 Future<List<Map<String, dynamic>>> _fetchData() async {
   http.Client client = http.Client();
 
-  final response = await client.get(Uri.parse(tmdbApiKey + '/bookshelf/allbooks/4'));
+  final response = await client.get(Uri.parse(tmdbApiKey + '/bookshelf/allbooks/1'));
   var data = jsonDecode(utf8.decode(response.bodyBytes));
 
   List<dynamic> listData = data;
