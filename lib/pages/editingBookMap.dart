@@ -1,5 +1,10 @@
 import 'dart:convert';
 
+import 'package:bookmap/pages/bookmap.dart';
+import 'package:bookmap/pages/bookmap_example.dart';
+import 'package:bookmap/pages/search.dart';
+import 'package:bookmap/pages/search_detail_get.dart';
+import 'myBookmapDetail.dart';
 import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
 import '../api_key.dart';
@@ -41,6 +46,8 @@ class _bookmapEdit extends State<_EditingBookMap>{
   bool open = true;
   bool close = false;
   late List<bool> isSelected;
+  bool change = false;
+  List<dynamic> newMapDetail = [];
 
   @override
   void initState(){
@@ -57,7 +64,13 @@ class _bookmapEdit extends State<_EditingBookMap>{
             future: _getMapDetail(mapId),
             builder: (context, snapshot){
               if (snapshot.hasData){
-                List<dynamic> myMapDetail = snapshot.data!;
+                List<dynamic> myBookMapDetail = [];
+                if (change == false){
+                   myBookMapDetail = snapshot.data!;
+                }
+                else{
+                  myBookMapDetail = newMapDetail;
+                }
                 return Column(
                   children: [
                     Container(
@@ -89,7 +102,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
                               ),
                               labelText: '북맵 제목',
                               labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                              hintText: myMapDetail[0]['bookMapTitle'],
+                              hintText: myBookMapDetail[0]['bookMapTitle'],
                               hintStyle: TextStyle(color: Colors.black38, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -115,7 +128,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
                               ),
                               labelText: '북맵 소개글',
                               labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                              hintText: myMapDetail[0]['bookMapContent'],
+                              hintText: myBookMapDetail[0]['bookMapContent'],
                               hintStyle: TextStyle(color: Colors.black38, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
                             ),
                           ),
@@ -216,7 +229,12 @@ class _bookmapEdit extends State<_EditingBookMap>{
                             child: Padding(padding: EdgeInsets.all(5))),
                         Expanded(
                           flex: 3,
-                          child: OutlinedButton(onPressed: (){},
+                          child: OutlinedButton(onPressed: (){
+                            Navigator.pushReplacement(
+                                context, 
+                                MaterialPageRoute(builder: (BuildContext context) => myMapDetail(myBookMapDetail[0])),
+                            );
+                          },
                               child: Text('저장', style: TextStyle(fontSize: 14, color: Colors.black87)),
                               style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.white))),
                         ),
@@ -231,14 +249,14 @@ class _bookmapEdit extends State<_EditingBookMap>{
                       physics: NeverScrollableScrollPhysics(),
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
-                      itemCount: myMapDetail[0]['bookMapIndex'].length,
+                      itemCount: myBookMapDetail[0]['bookMapIndex'].length,
                       itemBuilder: (context, index) {
-                        var detailContents = myMapDetail[0]['bookMapIndex'][index];
+                        var detailContents = myBookMapDetail[0]['bookMapIndex'][index];
                         var detailType = detailContents['type'];
                         var detailBooks = detailContents['map'];
                         var detailMemo = detailContents['memo'];
 
-                        if(detailMemo == null){
+                        if("Book".compareTo(detailType) == 0){
                           int num = detailBooks.length;
                           List<String> books = [];
                           for (int i = 0; i < num ; i++){
@@ -247,10 +265,8 @@ class _bookmapEdit extends State<_EditingBookMap>{
                           if(num<=3){
                             books.add('https://postfiles.pstatic.net/MjAyMzA2MDlfMTUz/MDAxNjg2MzA5MTk2Njc1.e0lBE1zzXGIZIg03GQ6c-J2E6ahezLFCWsZMZWpolYAg.nomA0xkMNBmkhgZ8q84XIbwer4nE9_KxtBojTb_vYTMg.PNG.odb1127/image.png?type=w773');
                           }
-                          print(books);
                           return GestureDetector(
                               onTap:(){
-
                               },
                               child: Container(
                                 height: 150,
@@ -261,14 +277,28 @@ class _bookmapEdit extends State<_EditingBookMap>{
                                     itemBuilder: (context1, index1){
                                       return Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: GestureDetector(
-                                          onTap: (){
-                                            print('삭제 확인: ${detailBooks[index1]}');
-                                            detailBooks.removeAt(index1);
-                                            print('삭제 완료: ${detailBooks}');
-                                          },
-                                          child: Image.network(books[index1],
-                                              height: 130),
+                                        child: Container(
+                                          color: Colors.redAccent,
+                                          child: GestureDetector(
+                                            onTap: (){
+                                              if (index1 == books.length - 1 && books.length != 5){
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => Search())
+                                              );
+                                            }
+                                              setState(() {
+                                                if (index1 != books.length - 1){
+                                                  detailBooks.removeAt(index1);
+                                                  newMapDetail = myBookMapDetail;
+                                                  change = true;
+                                                }
+                                              });
+
+                                            },
+                                            child: Image.network(books[index1],
+                                                height: 130),
+                                          ),
                                         ),
                                       );
                                     }),
@@ -276,7 +306,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
                           );
                         }
                         else{
-                          print('memo$detailMemo');
+                          // print('memo$detailMemo');
                           return Container(
                             decoration: BoxDecoration(color: Colors.orange.shade50),
                             height: 130,
@@ -339,3 +369,4 @@ Future<List<dynamic>> _getMapDetail(mapId) async {
 
   return listData;
 }
+

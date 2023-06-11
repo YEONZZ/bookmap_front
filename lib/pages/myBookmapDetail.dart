@@ -96,7 +96,7 @@ class _BookmapEx extends StatelessWidget{
                               var detailBooks = detailContents['map'];
                               var detailMemo = detailContents['memo'];
 
-                              if(detailMemo == null){
+                              if("Book".compareTo(detailType) == 0){
                                 int num = detailBooks.length;
                                 List<String> books = [];
                                 for (int i = 0; i < num ; i++){
