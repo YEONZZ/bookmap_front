@@ -1027,7 +1027,7 @@ class BookScreenState extends State<BookScreen> {
             ),
             Container( //시작일 컨테이너
               margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              height: MediaQuery.of(context).size.height * 0.04,
+              height: 35,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1052,7 +1052,7 @@ class BookScreenState extends State<BookScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return Container(
-                              height: MediaQuery.of(context).size.height*0.35,
+                              height: 300,
                               child: Column(
                                 children: [
                                   SizedBox(
@@ -1137,7 +1137,7 @@ class BookScreenState extends State<BookScreen> {
             ),
             Container( //종료일 컨테이너
               margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              height: MediaQuery.of(context).size.height * 0.04,
+              height: 35,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1162,7 +1162,7 @@ class BookScreenState extends State<BookScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return Container(
-                              height: MediaQuery.of(context).size.height*0.35,
+                              height: 300,
                               child: Column(
                                 children: [
                                   SizedBox(
@@ -1258,7 +1258,7 @@ class BookScreenState extends State<BookScreen> {
             ),
             Container(
               margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              height: MediaQuery.of(context).size.height * 0.04,
+              height: 35,
               decoration: BoxDecoration(
                   border: Border.all(
                     width: 1.0,
@@ -1281,8 +1281,8 @@ class BookScreenState extends State<BookScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(top: 16.5),
-                          width: 50,
+                          margin: EdgeInsets.only(top: 16.3),
+                          width: 150,
                           child: TextField(
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
@@ -1323,41 +1323,39 @@ class BookScreenState extends State<BookScreen> {
                       ),
                     ),
                   ), //평점 텍스트 끝
-                  Expanded(
-                    child: Container( //별 컨테이너
-                      child: RatingStars(
-                        value: starValue,
-                        onValueChanged: (v){
-                          setState(() {
-                            starValue = v;
-                            print('별점: $starValue');
-                          });
-                        },
-                        starBuilder: (index, color) => Icon(
-                          Icons.star,
-                          color: color,
-                          size: 35,
-                        ),
-                        starCount: 5,
-                        starSize: 30, //별 사이 간격
-                        valueLabelColor: const Color(0xff9b9b9b),
-                        valueLabelTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 12.0,),
-                        valueLabelRadius: 10,
-                        maxValue: 5,
-                        starSpacing: 1,
-                        maxValueVisibility: true,
-                        valueLabelVisibility: true,
-                        animationDuration: Duration(milliseconds: 1000),
-                        valueLabelPadding:
-                        const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-                        valueLabelMargin: const EdgeInsets.only(right: 8),
-                        starOffColor: const Color(0xffe7e8ea),
-                        starColor: Colors.yellow,
+                  Container( //별 컨테이너
+                    child: RatingStars(
+                      value: starValue,
+                      onValueChanged: (v){
+                        setState(() {
+                          starValue = v;
+                          print('별점: $starValue');
+                        });
+                      },
+                      starBuilder: (index, color) => Icon(
+                        Icons.star,
+                        color: color,
+                        size: 35,
                       ),
+                      starCount: 5,
+                      starSize: 30, //별 사이 간격
+                      valueLabelColor: const Color(0xff9b9b9b),
+                      valueLabelTextStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 12.0,),
+                      valueLabelRadius: 10,
+                      maxValue: 5,
+                      starSpacing: 1,
+                      maxValueVisibility: true,
+                      valueLabelVisibility: true,
+                      animationDuration: Duration(milliseconds: 1000),
+                      valueLabelPadding:
+                      const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                      valueLabelMargin: const EdgeInsets.only(right: 8),
+                      starOffColor: const Color(0xffe7e8ea),
+                      starColor: Colors.yellow,
                     ),
                   ),
                 ],
@@ -1380,7 +1378,7 @@ class BookScreenState extends State<BookScreen> {
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            height: MediaQuery.of(context).size.height * 0.04,
+            height: 35,
             decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1403,8 +1401,8 @@ class BookScreenState extends State<BookScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        padding: EdgeInsets.only(top: 16.5),
-                        width: 50,
+                        margin: EdgeInsets.only(top: 16.3),
+                        width: 150,
                         child: TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -1445,7 +1443,7 @@ class BookScreenState extends State<BookScreen> {
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            height: MediaQuery.of(context).size.height * 0.04,
+            height: 35,
             decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1468,8 +1466,8 @@ class BookScreenState extends State<BookScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        padding: EdgeInsets.only(top: 16.5),
-                        width: 50,
+                        margin: EdgeInsets.only(top: 16.3),
+                        width: 150,
                         child: TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -1509,7 +1507,7 @@ class BookScreenState extends State<BookScreen> {
           ),
           Container( //독서기간 컨테이너
             margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            height: MediaQuery.of(context).size.height * 0.04,
+            height: 35,
             decoration: BoxDecoration(
               border: Border.all(
                 width: 1.0,
@@ -1534,7 +1532,7 @@ class BookScreenState extends State<BookScreen> {
                         context: context,
                         builder: (BuildContext context) {
                           return Container(
-                            height: MediaQuery.of(context).size.height*0.35,
+                            height: 300,
                             child: Column(
                               children: [
                                 SizedBox(
