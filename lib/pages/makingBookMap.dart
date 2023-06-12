@@ -164,14 +164,14 @@ Future<String> _sendData() async {
   final httpClient = IOClient();
 
   final response = await httpClient.post(
-    Uri.parse('$bookmapKey/bookmap/save/1'), //수정 필요
+    Uri.parse('$bookmapKey/bookmap/save'), //수정 필요
      headers: <String, String>{
-       'Content-Type': 'application/json'
+       'Content-Type': 'application/json',
+       'Authorization': 'Bearer $token',
      },
     body: jsonEncode({
       "bookMapTitle": title,
       "bookMapContent": status,
-      //'Authorization': 'Bearer $token',
     }),
   );
 

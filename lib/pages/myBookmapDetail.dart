@@ -86,6 +86,10 @@ class _BookmapEx extends State<_myMapDetail>{
                           MaterialPageRoute(builder: (context) => EditingBookMap(mapId))
                       );
                     }, child: Text('EDIT',
+                      style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),)),
+                    TextButton(onPressed: (){
+                      _deleteMap(mapId);
+                    }, child: Text('DELETE',
                       style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),))
                   ],
                 ),
@@ -190,4 +194,11 @@ Future<List<dynamic>> _getMapDetail(mapId) async {
   dynamic listData = [mapDetailTest]; // data를 리스트로 감싸기
 
   return listData;
+}
+
+Future _deleteMap(mapId) async {
+  //print(mapId);
+  final httpClient = IOClient();
+  httpClient.delete(Uri.parse('$bookmapKey/bookmap/delete/$mapId'),
+  );
 }

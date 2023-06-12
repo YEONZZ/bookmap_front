@@ -296,10 +296,10 @@ class ScrapList extends StatelessWidget{
 Future<List<dynamic>> _getbookmap() async {
   final httpClient = IOClient();
   final bookmapResponse = await httpClient.get(
-      Uri.parse('$bookmapKey/bookmap/5'),
-      //headers: <String, String>{
-      //  'Authorization': 'Bearer $token'
-      //}
+      Uri.parse('$bookmapKey/bookmap'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      }
       );
 
   var bookmapTest = jsonDecode(utf8.decode(bookmapResponse.bodyBytes));
@@ -317,10 +317,10 @@ Future<List<dynamic>> _getScrap() async {
 
   final httpClient = IOClient();
   final bookmapResponse = await httpClient.get(
-    Uri.parse('$bookmapKey/bookmap/scrap/1'),
-    //headers: <String, String>{
-    //  'Authorization': 'Bearer $token'
-    //}
+    Uri.parse('$bookmapKey/bookmap/scrap'),
+    headers: <String, String>{
+     'Authorization': 'Bearer $token'
+    }
   );
 
   var bookmapTest = jsonDecode(utf8.decode(bookmapResponse.bodyBytes));
