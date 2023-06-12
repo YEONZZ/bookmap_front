@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:bookmap/main.dart';
 import 'package:flutter/material.dart';
 import 'package:bookmap/design/color.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -8,10 +9,11 @@ import '../api_key.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:intl/intl.dart';
 
+import '../login.dart';
+
 //초깃값 변수
 DateTime selectedStartDate = DateTime.now(); // 읽은 책 시작일
 DateTime selectedEndDate = DateTime.now(); // 읽은 책 종료일
-DateTime readingStartDate = DateTime.now(); // 읽고 있는 책 시작일 변수
 double starValue = 3.0;
 int readingPage = 0;
 int readTotalPage = 0;
@@ -76,7 +78,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                     PopupMenuButton(
                       icon: Icon(Icons.add_box, color: appcolor.shade600,),
                       onSelected: (value) {
-                        if (value == 1) { //북맵 저장 버튼 터치
+                        if (value == 1) { //책 수정 버튼 터치
                           var selectedScreen = '';
                           showModalBottomSheet(
                             context: context,
@@ -123,7 +125,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                                                                         Navigator.pushReplacement(
                                                                           context,
                                                                           MaterialPageRoute(
-                                                                            builder: (BuildContext context) => SearchDetailGetPage(homeIsbn: homeIsbn,), //추후 업데이트 할 것
+                                                                            builder: (BuildContext context) => MyApp(token), //추후 업데이트 할 것
                                                                           ),
                                                                         );
                                                                       },
@@ -845,13 +847,13 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         print('상태: $bookState');
         print('총페이지수: ${readTotalPage}');
         print('읽은페이지: ${readingPage}');
-        print('시작일: ${readingStartDate}');
+        print('시작일: ${selectedStartDate}');
 
         final bodyData = {
           'bookState': bookState,
           'totalPage': readTotalPage.toString(),
           'readingPage': readingPage,
-          'startDate': DateFormat('yyyy-MM-dd').format(readingStartDate),
+          'startDate': DateFormat('yyyy-MM-dd').format(selectedStartDate),
         };
 
         final response = await http.post(
@@ -919,29 +921,33 @@ class BookScreenState extends State<BookScreen> {
   late Map<String, dynamic> homeData;
   BookScreenState({required this.homeData});
   void initState() {
-    print('확인: $homeData');
+    //print('확인: $homeData');
     super.initState();
+    selectedStartDate = DateTime.now();
+    selectedEndDate = DateTime.now();
     //읽은 변수
-    // String startDateString = homeData['startDate'];
-    // DateTime? parsedStartDate = DateTime.tryParse(startDateString);
-    // if (parsedStartDate != null) {
-    //   selectedStartDate = parsedStartDate;
-    // } else {
-    //   // 날짜 변환 실패 시 대체 처리
-    //   print('종료일 출력 오류');
-    // }/// 읽은 책 시작일
-    // String endDateString = homeData['endDate'];
-    // DateTime? parsedEndDate = DateTime.tryParse(endDateString);
-    // if (parsedEndDate != null) {
-    //   selectedEndDate = parsedEndDate;
-    // } else {
-    //   // 날짜 변환 실패 시 대체 처리
-    //   print('종료일 출력 오류');
-    // }// 읽은 책 종료일
-    //readingStartDate = homeData['startDate']; // 읽고 있는 책 시작일 변수
+    if(homeData['startDate'] == null){
+      selectedStartDate = DateTime.now();
+    } else {
+      String startDateString = homeData['startDate'];
+      selectedStartDate = DateTime.parse(startDateString);
+    }
+    if(homeData['endDate'] == null){
+      selectedEndDate = DateTime.now();
+    } else {
+      String endDateString = homeData['endDate'];
+      selectedEndDate = DateTime.parse(endDateString);
+    }
+
+    starValue = 3.0;
+    if(homeData['grade'] == null) {
+      starValue = 3.0;
+    } else {
+      double starValueDouble = homeData['grade'];
+      starValue = starValueDouble;
+    }
+
     //readTotalPage = homeData['totalPage'];
-    // 읽는중인 변수
-    //starValue = homeData['grade'];
     //readingPage = homeData['readingPage'];
     //readingTotalPage = homeData['totalPage'];
   }
@@ -959,8 +965,12 @@ class BookScreenState extends State<BookScreen> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    // String startDateString = homeData['startDate'];
+    // DateTime startDate = DateTime.parse(startDateString);
     if (widget.selectedScreen == '읽은') {
       return Container(
         child: Column(
@@ -1075,12 +1085,7 @@ class BookScreenState extends State<BookScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: Text(
-                            homeData['startDate'] != null
-                                ? '${DateFormat('yyyy-MM-dd').format(homeData['startDate'] as DateTime)}'
-                                : (selectedStartDate != null
-                                ? '${DateFormat('yyyy-MM-dd').format(selectedStartDate)}'
-                                : '${DateFormat('yyyy-MM-dd').format(DateTime.now())}'
-                            ),
+                                '${DateFormat('yyyy-MM-dd').format(selectedStartDate)}',
                             style: TextStyle(color: Colors.black, fontSize: 16),
                           ),
                         ),
@@ -1192,12 +1197,7 @@ class BookScreenState extends State<BookScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: Text(
-                            homeData['endDate'] != null
-                                ? '${DateFormat('yyyy-MM-dd').format(homeData['endDate'] as DateTime)}'
-                                : (selectedEndDate != null
-                                ? '${DateFormat('yyyy-MM-dd').format(selectedEndDate)}'
-                                : '${DateFormat('yyyy-MM-dd').format(DateTime.now())}'
-                            ),
+                          '${DateFormat('yyyy-MM-dd').format(selectedEndDate)}',
                             style: TextStyle(color: Colors.black, fontSize: 16),
                           ),
                         ),
@@ -1286,7 +1286,7 @@ class BookScreenState extends State<BookScreen> {
                   Expanded(
                     child: Container( //별 컨테이너
                       child: RatingStars(
-                        value: homeData['grade'] == null ? starValue : homeData['grade'],
+                        value: starValue,
                         onValueChanged: (v){
                           setState(() {
                             starValue = v;
@@ -1500,7 +1500,7 @@ class BookScreenState extends State<BookScreen> {
                                 SizedBox(
                                   height: 250,
                                   child: ScrollDatePicker(
-                                    selectedDate: readingStartDate,
+                                    selectedDate: selectedStartDate,
                                     locale: Locale('ko'),
                                     scrollViewOptions: DatePickerScrollViewOptions(
                                       year: ScrollViewDetailOptions(
@@ -1517,8 +1517,8 @@ class BookScreenState extends State<BookScreen> {
                                     ),
                                     onDateTimeChanged: (DateTime value) {
                                       setState(() {
-                                        readingStartDate = value;
-                                        print('시작일: $readingStartDate');
+                                        selectedStartDate = value;
+                                        print('시작일: $selectedStartDate');
                                       });
                                     },
                                   ),
@@ -1571,12 +1571,7 @@ class BookScreenState extends State<BookScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 5),
                         child: Text(
-                          homeData['startDate'] != null
-                              ? '${DateFormat('yyyy-MM-dd').format(homeData['startDate'] as DateTime)}'
-                              : (selectedStartDate != null
-                              ? '${DateFormat('yyyy-MM-dd').format(readingStartDate)}'
-                              : '${DateFormat('yyyy-MM-dd').format(DateTime.now())}'
-                          ),
+                        '${DateFormat('yyyy-MM-dd').format(selectedStartDate)}',
                           style: TextStyle(color: Colors.black, fontSize: 16,),
                         ),
                       ),
