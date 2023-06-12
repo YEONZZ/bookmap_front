@@ -12,8 +12,6 @@ int check = 0;
 class Search extends StatelessWidget {
   const Search({super.key});
 
-  //Search({required this.screens});
-  //final List<Widget> screens;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

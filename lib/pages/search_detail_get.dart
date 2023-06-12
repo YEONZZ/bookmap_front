@@ -15,7 +15,6 @@ DateTime readingStartDate = DateTime.now(); // 읽고 있는 책 시작일 변�
 double starValue = 3.0;
 int readingPage = 0;
 int readTotalPage = 0;
-int readingTotalPage = 0;
 int memoReadingPage = 0;
 String memoContent = '';
 
@@ -33,17 +32,12 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
   Future<Map<String, dynamic>>? homeDataFuture;
 
 
-  final currentDate = DateTime.now();
-  final example = DateTime(2023, 05, 02);
-  var diff = const Duration(days: 0);
-  //diff = currentDate.difference(example);
+
   @override
   void initState() {
     super.initState();
     homeDataFuture = _fetchData(); // 데이터 가져오는 Future 함수 호출
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,13 +56,17 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
               return Text('Error');
             } else{
               final homeData = snapshot.data as Map<String, dynamic>;
+              // homeData['startDate']와 현재 날짜 사이의 차이 계산
+              DateTime startDate = DateFormat("yyyy-MM-dd").parse(homeData['startDate']);
+              DateTime currentDate = DateTime.now();
+              Duration difference = currentDate.difference(startDate);
               return Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
                   elevation: 0,
                   backgroundColor: Colors.white,
                   title: Text(
-                    '${homeData?['bookResponseDto']['title']}',
+                    '${homeData['bookResponseDto']['title']}',
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -113,9 +111,8 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                                                     children: [
                                                       TextButton(
                                                         onPressed: () async {
-                                                          String result = await _postData(selectedScreen, homeIsbn);
-                                                          if(result.isNotEmpty) { //post성공시
-                                                            print('post 성공');
+                                                          await _postData(selectedScreen, homeIsbn);
+                                                          print('post 성공');
                                                             showDialog(
                                                               context: context,
                                                               builder: (BuildContext context) {
@@ -125,15 +122,20 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                                                                   actions: [
                                                                     TextButton(
                                                                       onPressed: () {
-                                                                        Navigator.of(context).pop(); // 다이얼로그 닫기
+                                                                        // 화면을 다시 로드합니다.
+                                                                        Navigator.pushReplacement(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                            builder: (BuildContext context) => SearchDetailGetPage(homeIsbn: homeIsbn,), //추후 업데이트 할 것
+                                                                          ),
+                                                                        );
                                                                       },
-                                                                      child: Text('확인'),
+                                                                      child: Text('확인', style: TextStyle(color: appcolor.shade700),),
                                                                     ),
                                                                   ],
                                                                 );
                                                               },
                                                             );
-                                                          }
                                                         },
                                                         child: Text(
                                                           '저장',
@@ -252,7 +254,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                                           ),
                                           Container( //버튼별로 선택한 화면 출력
                                             margin: EdgeInsets.only(top: 10),
-                                            child: BookScreen(selectedScreen: selectedScreen,),
+                                            child: BookScreen(selectedScreen: selectedScreen, homeData: homeData),
                                             //BookScreen(selectedScreen: selectedScreen,),
                                           ),
                                         ],
@@ -263,14 +265,18 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                               );
                             },
                           );
-                        } else if (value == 2) { // 메모 저장 버튼 터치
+                        } else if (value == 2) {
+                          //삭제 로직 추가
+                        } else { //메모 저장 버튼 터치
                           showPerformanceDialog(context, homeIsbn);
                         }
                       },
                       itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                         PopupMenuItem(value: 1, child: Text('수정'),),
                         PopupMenuDivider(),
-                        PopupMenuItem(value: 2, child: Text('메모추가')),
+                        PopupMenuItem(value: 2, child: Text('삭제')),
+                        PopupMenuDivider(),
+                        PopupMenuItem(value: 3, child: Text('메모 추가')),
                       ],
                     )
                     //책 분류 버튼
@@ -289,7 +295,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                           children: [
                             Center(
                               child: Image.network(
-                                homeData?['bookResponseDto']['image'],
+                                homeData['bookResponseDto']['image'],
                                 fit: BoxFit.contain,
                                 width: 200,
                                 height: 200,
@@ -315,7 +321,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                             Container(
                               padding: EdgeInsets.only(top: 13),
                               child: Text(
-                                '${homeData?['bookResponseDto']['author']}',
+                                '${homeData['bookResponseDto']['author']}',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: Colors.black54,
@@ -327,38 +333,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                           ],
                         ),
                       ),
-                      // Container( //날짜 컨테이너
-                      //   padding: EdgeInsets.only(left: 10, right: 10, top: 15),
-                      //   height: 30,
-                      //   child: Row(
-                      //     children: [
-                      //       Expanded(
-                      //           flex: 10,
-                      //           child: Text('2023.05.02 로부터 ${diff.inDays.toString()}일째 읽고 있어요!',
-                      //             style: TextStyle(fontSize: 14,
-                      //                 fontWeight: FontWeight.bold,
-                      //                 color: Colors.black),)
-                      //       ),
-                      //       Text('수정',
-                      //           style: TextStyle(fontSize: 14, color: Colors.black38, decoration: TextDecoration.underline)
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // Padding(
-                      //   padding: EdgeInsets.only(left: 10, top: 10, right: 10),
-                      //   child: new LinearPercentIndicator(
-                      //     width: MediaQuery.of(context).size.width - 20,
-                      //     animation: false,
-                      //     lineHeight: 20.0,
-                      //     animationDuration: 2000,
-                      //     percent: 0.15,
-                      //     center: Text("15.0%"),
-                      //     barRadius: const Radius.circular(16),
-                      //     progressColor: appcolor,
-                      //     backgroundColor: Color(0x7FD8D8D8),
-                      //   ),
-                      // ),
+                      _buildBookWidgets(homeData, difference),
                       Container( //북맵 알려주는 컨테이너
                         padding: EdgeInsets.only(left: 10, right: 10, top: 5),
                         height: 30,
@@ -581,34 +556,134 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
     );
   }
 
+  Widget _buildBookWidgets(Map<String, dynamic> homeData, Duration difference) {
+    if (homeData['bookState'] == '읽는중인') {
+      return Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 10, right: 10, top: 5),
+            height: 30,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 10,
+                  child: Text(
+                    '시작일: ${homeData['startDate']}로부터 ${difference.inDays}일째 읽고 있어요!',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                Text(
+                  '수정',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black38,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10, top: 10, right: 10),
+            child: LinearPercentIndicator(
+              width: MediaQuery.of(context).size.width - 20,
+              animation: false,
+              lineHeight: 20.0,
+              animationDuration: 2000,
+              percent: 0.15,
+              center: Text("${homeData['readingPercentage']}%"),
+              barRadius: const Radius.circular(16),
+              progressColor: appcolor,
+              backgroundColor: Color(0x7FD8D8D8),
+            ),
+          ),
+        ],
+      );
+    } else {
+      return SizedBox.shrink();
+    }
+  }
+
   Widget _buildMemoListView(Map<String, dynamic> homeData) {
     return Expanded(
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: homeData['bookMemoResponseDtos'].length,
         itemBuilder: (BuildContext context, index) {
-          return Container(
-            margin: EdgeInsets.only(left: 10, right: 10, bottom: 5),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.width * 0.2,
-            decoration: BoxDecoration(
-              color: appcolor.shade50,
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-            ),
-            child: Column(
-              children: [
-                Container(
-                  child: Text(
-                    '${homeData['bookMemoResponseDtos'][index]['content']}',
+          String dateTimeString = homeData['bookMemoResponseDtos'][index]['saved'];
+          DateTime dateTime = DateTime.parse(dateTimeString);
+
+          int year = dateTime.year;
+          int month = dateTime.month;
+          int day = dateTime.day;
+          int hour = dateTime.hour;
+          int minute = dateTime.minute;
+
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.only(left: 10, right: 10, bottom: 5),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width * 0.25,
+              decoration: BoxDecoration(
+                color: appcolor.shade50,
+                borderRadius: BorderRadius.all(Radius.circular(16)),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                            onPressed: (){},
+                            child: Text(
+                                '수정',
+                              style: TextStyle(color: appcolor.shade700),
+                            )
+                        ),
+                        TextButton(
+                            onPressed: (){},
+                            child: Text(
+                                '삭제',
+                              style: TextStyle(color: appcolor.shade700),
+                            )
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Text(
-                  '${homeData['bookMemoResponseDtos'][index]['page']}',
-                ),
-                Text(
-                  '${homeData['bookMemoResponseDtos'][index]['saved']}',
-                ),
-              ],
+                  Container(
+                    margin: EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      '${homeData['bookMemoResponseDtos'][index]['content']}',
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(left: 10, right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${homeData['bookMemoResponseDtos'][index]['page']} 페이지',
+                            style: TextStyle(
+                                color: appcolor.shade800, fontSize: 12),
+                          ),
+                        ),
+                        Text(
+                          '저장일: $year-$month-$day, $hour:$minute',
+                          style: TextStyle(color: appcolor.shade800, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -621,7 +696,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
     return data;
   }
 
-  Future<dynamic> showPerformanceDialog(BuildContext context, homeIsbn) async {
+  Future<dynamic> showPerformanceDialog(BuildContext context, homeIsbn) async { //메모 추가 함수
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -681,7 +756,6 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
               onPressed: () async {
                 await savePerfomance(homeIsbn);
                 print('메모 post 성공');
-
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -691,7 +765,6 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                       actions: [
                         TextButton(
                           onPressed: () {
-                            Navigator.pop(context);
                             // 화면을 다시 로드합니다.
                             Navigator.pushReplacement(
                               context,
@@ -700,16 +773,13 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                               ),
                             );
                           },
-                          child: Text('확인'),
+                          child: Text('확인', style: TextStyle(color: appcolor.shade700),),
                         ),
                       ],
                     );
                   },
                 );
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: appcolor,
-              ),
               child: Text('저장'),
             ),
           ],
@@ -739,7 +809,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
 
 
 
-  Future<String> _postData(String selectedScreen, String homeIsbn) async {
+  Future<String> _postData(String selectedScreen, String homeIsbn) async { //정보 업데이트 함수
     String bookState = '';
 
     try {
@@ -761,7 +831,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${homeIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/changeall/1?isbn=' + '${homeIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
@@ -773,24 +843,25 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         bookState = '읽는중인';
 
         print('상태: $bookState');
-        print('총페이지수: ${readingTotalPage}');
+        print('총페이지수: ${readTotalPage}');
         print('읽은페이지: ${readingPage}');
         print('시작일: ${readingStartDate}');
 
         final bodyData = {
           'bookState': bookState,
-          'totalPage': readingTotalPage.toString(),
+          'totalPage': readTotalPage.toString(),
           'readingPage': readingPage,
           'startDate': DateFormat('yyyy-MM-dd').format(readingStartDate),
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${homeIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/changeall/1?isbn=' + '${homeIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
           body: jsonEncode(bodyData),
         );
+        print('확인용: ${response.body}');
 
         return response.body;
       } else if (selectedScreen == '읽고싶은') {
@@ -802,7 +873,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${homeIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/changeall/1?isbn=' + '${homeIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
           },
@@ -812,7 +883,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         return response.body;
       }
 
-      return ''; // 선택한 상태가 없을 경우 빈 문자열 반환
+      return '선택한 상태 없음'; // 선택한 상태가 없을 경우
     } catch (e) {
       return 'Error: $e';
     }
@@ -823,7 +894,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
 
 
 
-Future<Map<String, dynamic>> _getISBN(homeIsbn) async {
+Future<Map<String, dynamic>> _getISBN(homeIsbn) async { //상세정보 가져오는 함수
   http.Client client = http.Client();
   final response = await client.get(Uri.parse(tmdbApiKey + '/bookdetail/1?isbn='+'${homeIsbn}'));
   var homeData = jsonDecode(utf8.decode(response.bodyBytes));
@@ -834,25 +905,45 @@ Future<Map<String, dynamic>> _getISBN(homeIsbn) async {
 
 class BookScreen extends StatefulWidget {
   final String selectedScreen;
+  final Map<String, dynamic> homeData;
 
   BookScreen({
-    required this.selectedScreen,
+    required this.selectedScreen, required this.homeData,
   });
 
   @override
-  BookScreenState createState() => BookScreenState();
+  BookScreenState createState() => BookScreenState(homeData: homeData);
 }
 
 class BookScreenState extends State<BookScreen> {
+  late Map<String, dynamic> homeData;
+  BookScreenState({required this.homeData});
   void initState() {
+    print('확인: $homeData');
     super.initState();
-    selectedStartDate = DateTime.now(); // 읽은 책 시작일
-    selectedEndDate = DateTime.now(); // 읽은 책 종료일
-    readingStartDate = DateTime.now(); // 읽고 있는 책 시작일 변수
-    starValue = 3.0;
-    readingPage = 0;
-    readTotalPage = 0;
-    readingTotalPage = 0;
+    //읽은 변수
+    // String startDateString = homeData['startDate'];
+    // DateTime? parsedStartDate = DateTime.tryParse(startDateString);
+    // if (parsedStartDate != null) {
+    //   selectedStartDate = parsedStartDate;
+    // } else {
+    //   // 날짜 변환 실패 시 대체 처리
+    //   print('종료일 출력 오류');
+    // }/// 읽은 책 시작일
+    // String endDateString = homeData['endDate'];
+    // DateTime? parsedEndDate = DateTime.tryParse(endDateString);
+    // if (parsedEndDate != null) {
+    //   selectedEndDate = parsedEndDate;
+    // } else {
+    //   // 날짜 변환 실패 시 대체 처리
+    //   print('종료일 출력 오류');
+    // }// 읽은 책 종료일
+    //readingStartDate = homeData['startDate']; // 읽고 있는 책 시작일 변수
+    //readTotalPage = homeData['totalPage'];
+    // 읽는중인 변수
+    //starValue = homeData['grade'];
+    //readingPage = homeData['readingPage'];
+    //readingTotalPage = homeData['totalPage'];
   }
 
   void onSaveButtonPressed(DateTime selectedDate, String dateType) {
@@ -984,8 +1075,13 @@ class BookScreenState extends State<BookScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: Text(
-                            '${selectedStartDate.year}년 ${selectedStartDate.month}월 ${selectedStartDate.day}일',
-                            style: TextStyle(color: Colors.black, fontSize: 16,),
+                            homeData['startDate'] != null
+                                ? '${DateFormat('yyyy-MM-dd').format(homeData['startDate'] as DateTime)}'
+                                : (selectedStartDate != null
+                                ? '${DateFormat('yyyy-MM-dd').format(selectedStartDate)}'
+                                : '${DateFormat('yyyy-MM-dd').format(DateTime.now())}'
+                            ),
+                            style: TextStyle(color: Colors.black, fontSize: 16),
                           ),
                         ),
                       ),
@@ -1096,8 +1192,13 @@ class BookScreenState extends State<BookScreen> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 5),
                           child: Text(
-                            '${selectedEndDate.year}년 ${selectedEndDate.month}월 ${selectedEndDate.day}일',
-                            style: TextStyle(color: Colors.black, fontSize: 16,),
+                            homeData['endDate'] != null
+                                ? '${DateFormat('yyyy-MM-dd').format(homeData['endDate'] as DateTime)}'
+                                : (selectedEndDate != null
+                                ? '${DateFormat('yyyy-MM-dd').format(selectedEndDate)}'
+                                : '${DateFormat('yyyy-MM-dd').format(DateTime.now())}'
+                            ),
+                            style: TextStyle(color: Colors.black, fontSize: 16),
                           ),
                         ),
                       ),
@@ -1145,7 +1246,7 @@ class BookScreenState extends State<BookScreen> {
                           child: TextField(
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
-                              hintText: '0',
+                              hintText: homeData['totalPage'] != null ? '${homeData['totalPage']}' : '0',
                               border: InputBorder.none,
                             ),
                             style: TextStyle(color: Colors.black, fontSize: 16,),
@@ -1185,7 +1286,7 @@ class BookScreenState extends State<BookScreen> {
                   Expanded(
                     child: Container( //별 컨테이너
                       child: RatingStars(
-                        value: starValue,
+                        value: homeData['grade'] == null ? starValue : homeData['grade'],
                         onValueChanged: (v){
                           setState(() {
                             starValue = v;
@@ -1267,14 +1368,14 @@ class BookScreenState extends State<BookScreen> {
                         child: TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: '0',
+                            hintText:  homeData['totalPage'] != null ? '${homeData['totalPage']}' : '0',
                             border: InputBorder.none,
                           ),
                           style: TextStyle(color: Colors.black, fontSize: 16,),
                           onChanged: (value) {
                             setState(() {
-                              readingTotalPage = int.parse(value);
-                              print('총 페이지수: $readingTotalPage');
+                              readTotalPage = int.parse(value);
+                              print('총 페이지수: $readTotalPage');
                             });
                           },
                           textAlign: TextAlign.right,
@@ -1332,7 +1433,7 @@ class BookScreenState extends State<BookScreen> {
                         child: TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            hintText: '0',
+                            hintText:  homeData['readingPage'] != null ? '${homeData['readingPage']}' : '0',
                             border: InputBorder.none,
                           ),
                           style: TextStyle(color: Colors.black, fontSize: 16,),
@@ -1470,7 +1571,12 @@ class BookScreenState extends State<BookScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 5),
                         child: Text(
-                          '${readingStartDate.year}년 ${readingStartDate.month}월 ${readingStartDate.day}일',
+                          homeData['startDate'] != null
+                              ? '${DateFormat('yyyy-MM-dd').format(homeData['startDate'] as DateTime)}'
+                              : (selectedStartDate != null
+                              ? '${DateFormat('yyyy-MM-dd').format(readingStartDate)}'
+                              : '${DateFormat('yyyy-MM-dd').format(DateTime.now())}'
+                          ),
                           style: TextStyle(color: Colors.black, fontSize: 16,),
                         ),
                       ),
