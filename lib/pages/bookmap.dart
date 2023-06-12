@@ -289,7 +289,7 @@ class ScrapList extends StatelessWidget{
           }
         },
       ),
-    );
+    ));
   }
 }
 
