@@ -72,8 +72,24 @@ class MyStatelessWidget extends StatelessWidget{
                 datas.add(getData['profileMemoResponseDtos']);
               }
 
-              print(datas);
-              var data1 = datas[0][0]['content'];
+              var memoContent1 = "";
+              var memoTitle1 = "";
+              var memoContent2 = "";
+              var memoTitle2 = "";
+              print(datas[0].length);
+              if (datas.length > 0 && datas[0].length >= 1 && datas[0][0].containsKey('title')) {
+                memoTitle1 = datas[0][0]['title'];
+                memoContent1 = datas[0][0]['content'];
+              }
+              if (datas.length > 0 && datas[0].length > 1 && datas[0][1].containsKey('title')) {
+                memoTitle2 = datas[0][1]['title'];
+                memoContent2 = datas[0][1]['content'];
+              }
+              print(memoContent1);
+              print(memoTitle1);
+              print(memoContent2);
+              print(memoTitle2);
+
 
               return Column(
                 children: [
@@ -171,23 +187,25 @@ class MyStatelessWidget extends StatelessWidget{
                             const Expanded(flex: 10,
                                 child: Text('독서 노트 모아보기', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),)),
                             Expanded(flex: 1, child: IconButton(onPressed:(){}, icon: const Icon(Icons.add))) ],),
+                          if(memoContent1 != "" || memoTitle1 != "")
                           Card(
                               color: appcolor,
                               margin: EdgeInsets.all(0),
                               child: SizedBox(
-                                child: ListTile(title: Text("${datas[0][0]['content']}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
-                                  subtitle: Text('${datas[0][0]['title']}',style: TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis),
+                                child: ListTile(title: Text("$memoContent1", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                                  subtitle: Text('$memoTitle1',style: TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis),
                                   mouseCursor: MouseCursor.uncontrolled,
                                 ),)),
+                          if(memoContent2 != "" || memoTitle2 != "")
                           Card(
                               color: appcolor,
                               margin: EdgeInsets.only(top:5),
                               child: SizedBox(
-                                child: ListTile(title: Text("${datas[0][1]['content']}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
-                                  subtitle: Text("${datas[0][1]['title']}",style: TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis),
+                                child: ListTile(title: Text("$memoTitle2", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis),
+                                  subtitle: Text("$memoTitle2",style: TextStyle(fontSize: 11), overflow: TextOverflow.ellipsis),
                                   mouseCursor: MouseCursor.uncontrolled,
                                 ),))
-                        ]
+            ]
                     ),
                   ),
                   const Divider(

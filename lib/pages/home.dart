@@ -64,7 +64,7 @@ class HomeStatelessWidget extends StatelessWidget{
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Search(),
+                      builder: (context) => Search(token),
                     ),
                   );
                 },

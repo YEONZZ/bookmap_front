@@ -265,7 +265,8 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                             },
                           );
                         } else if (value == 2) {
-                          //삭제 로직 추가
+                          deleteBook(context, homeIsbn);
+
                         } else { //메모 저장 버튼 터치
                           showPerformanceDialog(context, homeIsbn);
                         }
@@ -794,9 +795,10 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
 
   Future savePerfomance(homeIsbn) async{ //메모 post
     final response = await http.post(
-      Uri.parse(tmdbApiKey + '/bookmemo/save/1?isbn='+'${homeIsbn}'),
+      Uri.parse(tmdbApiKey + '/bookmemo/save?isbn='+'${homeIsbn}'),
       headers: <String, String>{
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
       },
       body: jsonEncode({
         "content": memoContent,
@@ -833,9 +835,10 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/changeall/1?isbn=' + '${homeIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/changeall?isbn=' + '${homeIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode(bodyData),
         );
@@ -857,9 +860,10 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/changeall/1?isbn=' + '${homeIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/changeall?isbn=' + '${homeIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode(bodyData),
         );
@@ -875,9 +879,10 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/changeall/1?isbn=' + '${homeIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/changeall?isbn=' + '${homeIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode(bodyData),
         );
@@ -898,11 +903,46 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
 
 Future<Map<String, dynamic>> _getISBN(homeIsbn) async { //상세정보 가져오는 함수
   http.Client client = http.Client();
-  final response = await client.get(Uri.parse(tmdbApiKey + '/bookdetail/1?isbn='+'${homeIsbn}'));
+  final response = await client.get(Uri.parse(tmdbApiKey + '/book/detail?isbn='+'${homeIsbn}'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
   var homeData = jsonDecode(utf8.decode(response.bodyBytes));
 
 
   return homeData;
+}
+
+Future<void> deleteBook(BuildContext context, homeIsbn) async {
+  http.Client client = http.Client();
+  final response = client.delete(Uri.parse(tmdbApiKey + '/book/delete?isbn='+'${homeIsbn}'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
+
+  // 특정 작업 수행
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('삭제'),
+        content: Text('삭제되었습니다.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MyApp(token),
+                ),
+              );
+            },
+            child: Text('확인', style: TextStyle(color: appcolor.shade700)),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 class BookScreen extends StatefulWidget {

@@ -143,10 +143,15 @@ class _CalendarState extends State<Calendar> {
       lastDay: DateTime.utc(2023, 12, 31),
       calendarStyle: CalendarStyle(
         markerDecoration: BoxDecoration(
-          color: Colors.blue,
+          color: appcolor.shade600,
+          shape: BoxShape.circle,
+        ),
+        todayDecoration: BoxDecoration(
+          color:  appcolor.shade100, // 원하는 색상으로 변경
           shape: BoxShape.circle,
         ),
       ),
+
       onPageChanged: (focusedDay) {
         currentPageStartDate = _getFirstDayOfMonth(focusedDay);
         widget.onDaySelected(currentPageStartDate);
@@ -287,7 +292,7 @@ class SumUp extends State<SumUpState> {
 Future<List<Map<String, dynamic>>> _fetchData(int year) async {
   final httpClient = IOClient();
   final userResponse = await httpClient.get(
-    Uri.parse('$logApiKey/summary/4?year=$year'),
+    Uri.parse('$logApiKey/summary?year=$year'),
       headers: <String, String>{
         'Authorization': 'Bearer $token'
       }

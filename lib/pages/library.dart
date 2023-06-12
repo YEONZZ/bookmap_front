@@ -29,7 +29,7 @@ class Library extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => FirstPage(),
-        '/search': (context) => Search(),
+        '/search': (context) => Search(token),
         '/profile': (context) => Profile(token)
       },
     );
@@ -507,7 +507,10 @@ class _FirstPage extends State<FirstPage> {
 Future<List<Map<String, dynamic>>> _fetchData() async {
   http.Client client = http.Client();
 
-  final response = await client.get(Uri.parse(tmdbApiKey + '/bookshelf/allbooks/1'));
+  final response = await client.get(Uri.parse(tmdbApiKey + '/bookshelf/allbooks'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
   var data = jsonDecode(utf8.decode(response.bodyBytes));
 
   List<dynamic> listData = data;

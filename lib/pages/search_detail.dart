@@ -26,7 +26,7 @@ String memoContent = '';
 
 class SearchDetailPage extends StatefulWidget {
   final dynamic searchData; //카카오 책 검색 후 받아오는 데이터
-  SearchDetailPage({this.searchData, required data});
+  SearchDetailPage({this.searchData});
 
   @override
   _SearchDetailPage createState() => _SearchDetailPage(searchData: searchData);
@@ -575,9 +575,10 @@ class _SearchDetailPage extends State<SearchDetailPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${searchIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/save?isbn=' + '${searchIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode(bodyData),
         );
@@ -599,9 +600,10 @@ class _SearchDetailPage extends State<SearchDetailPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${searchIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/save?isbn=' + '${searchIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode(bodyData),
         );
@@ -617,9 +619,10 @@ class _SearchDetailPage extends State<SearchDetailPage> {
         };
 
         final response = await http.post(
-          Uri.parse(tmdbApiKey + '/book/save/1?isbn=' + '${searchIsbn}'),
+          Uri.parse(tmdbApiKey + '/book/save?isbn=' + '${searchIsbn}'),
           headers: <String, String>{
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token'
           },
           body: jsonEncode(bodyData),
         );
