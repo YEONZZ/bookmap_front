@@ -51,21 +51,25 @@ class _bookmapEdit extends State<_EditingBookMap>{
   late List<bool> isSelected;
   bool change = false;
   List<dynamic> newMapDetail = [];
-
+  String title = "";
+  String sentences = "";
+  String keyword = "";
 
   @override
   void initState(){
     isSelected = [open, close];
   }
 
+
   @override
   Widget build(BuildContext context) {
 
     return WillPopScope(
     onWillPop: () async {
+      var myBookmap = await _getMapDetail(mapId);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => myMapDetail(mapId)),
+        MaterialPageRoute(builder: (context) => myMapDetail(myBookmap[0])),
       );
       return true;
     },
@@ -109,6 +113,11 @@ class _bookmapEdit extends State<_EditingBookMap>{
                         children: [
                           TextField(style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, color: Colors.black),
                             controller: _titleEditingController,
+                            onChanged: (value){
+                            setState(() {
+                              title = value;
+                            });
+                            },
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                   borderSide: BorderSide(width: 3, color: Colors.black87)
@@ -315,9 +324,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
                                     itemBuilder: (context1, index1){
                                       return Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Container(
-                                          color: Colors.redAccent,
-                                          child: GestureDetector(
+                                        child: GestureDetector(
                                             onTap: () async {
                                               setState(() {
                                                 if (index1 != books.length - 1){
@@ -338,8 +345,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
                                             child: Image.network(books[index1],
                                                 height: 130),
                                           ),
-                                        ),
-                                      );
+                                        );
                                     }),
                               )
                           );
