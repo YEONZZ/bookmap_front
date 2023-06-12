@@ -41,6 +41,7 @@ class BookMapList extends StatefulWidget {
 }
 
 class _BookMapList extends State<BookMapList> {
+  bool showButton = true;
   final _authentication = firebaseauth.FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
