@@ -16,11 +16,9 @@ import 'library.dart';
 
 final imageList = [
   Image.network(
-      'https://shopping-phinf.pstatic.net/main_3839015/38390159619.20230502161943.jpg?type=w300', fit: BoxFit.fitWidth),
+      'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832', fit: BoxFit.fitWidth),
   Image.network(
-      'https://shopping-phinf.pstatic.net/main_3250610/32506106882.20221229070913.jpg?type=w300', fit: BoxFit.fitWidth),
-  Image.network(
-      'https://shopping-phinf.pstatic.net/main_3250515/32505158692.20220527055317.jpg?type=w300', fit: BoxFit.fitWidth),
+      'https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F1467038%3Ftimestamp%3D20230128141840', fit: BoxFit.fitWidth),
 ];
 
 void main() {
@@ -132,6 +130,7 @@ class HomeStatelessWidget extends StatelessWidget{
                         future: _fetchData(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
+                            //print('토큰: $token');
                             List<Map<String, dynamic>> dataList = snapshot.data!;
                             return Row(
                               children: dataList.map((data) {
@@ -196,6 +195,56 @@ class HomeStatelessWidget extends StatelessWidget{
                   ],
                 ),
               ),
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0, right: 12),
+            child: FutureBuilder<List<Map<String, dynamic>>>(
+              future: _fetchData(), // Replace _fetchData with your own function to fetch the JSON data asynchronously
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List<Map<String, dynamic>> jsonData = snapshot.data!;
+                  List<String> imageList = [];
+
+                  for (var data in jsonData) {
+                    dynamic getData = data;
+                    List<dynamic> getHomeDatas = getData['bookMapResponseDtos'];
+                    int num = getHomeDatas.length;
+                    for (var getHomeData in getHomeDatas.sublist(0, num)) {
+                      if (getHomeData['bookMapImage'] != null) {
+                        imageList.add(getHomeData['bookMapImage'] as String);
+                      }else{
+                        imageList.add('https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832');
+                      }
+                    }
+                  }
+
+                  print(imageList);
+                  return CarouselSlider(
+                    options: CarouselOptions(height: 150.0, autoPlay: true),
+                    items: imageList.map((imageUrl) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.symmetric(horizontal: 5.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.network(imageUrl, fit: BoxFit.fitWidth),
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return CircularProgressIndicator(); // Show a loading indicator while data is being fetched
+                }
+              },
+            ),
+          ),
+
+          /*
               Padding(
                 padding: const EdgeInsets.only(left: 12.0, right: 12),
                 child: CarouselSlider(
@@ -216,6 +265,8 @@ class HomeStatelessWidget extends StatelessWidget{
                   }).toList(),
                 ),
               ),
+
+               */
               Padding(
                 padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 24),
                 child: Row(
@@ -245,57 +296,74 @@ class HomeStatelessWidget extends StatelessWidget{
                     color: appcolor.shade50,
                     borderRadius: BorderRadius.all(Radius.circular(16)),
                   ),
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  child: Column(
-                    children: [
-                      Padding(padding: EdgeInsets.all(10)),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Image.network(
-                                'https://shopping-phinf.pstatic.net/main_3731353/37313533623.20230516164633.jpg?type=w300',
-                                width: 90,
-                                height: 120,
-                                fit: BoxFit.fitHeight),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                Text("세이노의 가르침", style: TextStyle(color: Colors.black, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),),
-                                Text("세이노", style: TextStyle(color: Colors.black38, fontSize: 12, fontStyle: FontStyle.normal, fontWeight: FontWeight.normal),),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Image.network(
-                                'https://shopping-phinf.pstatic.net/main_3867415/38674154646.20230502162404.jpg?type=w300',
-                                width: 90,
-                                height: 120,
-                                fit: BoxFit.fitHeight),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                Text("사장학개론", style: TextStyle(color: Colors.black, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),),
-                                Text("김승호", style: TextStyle(color: Colors.black38, fontSize: 12, fontStyle: FontStyle.normal, fontWeight: FontWeight.normal),),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      Padding(padding: EdgeInsets.all(10)),
-                    ],
-                  ),
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  child: FutureBuilder<List<Map<String, dynamic>>>(
+                      future: _fetchData(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          List<Map<String, dynamic>> dataList = snapshot.data!;
+                          return Column(
+                            children: dataList.map((data) {
+                              dynamic getData = data;
+                              List<dynamic> getHomeDatas = getData['bookTopResponseDtos'];
+                              int num  = getHomeDatas.length;
+                              return Column(
+                                children: getHomeDatas.sublist(0, num).map((getHomeData) {
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 10,bottom:  5),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 2,
+                                          child: Container(
+                                            margin: EdgeInsets.only(left: 10),
+                                            child: Image.network(
+                                                getHomeData['image'],
+                                                width: 90,
+                                                height: 120,
+                                                fit: BoxFit.fitHeight),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 4,
+                                          child: Container(
+                                            width: MediaQuery.of(context).size.width,
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                    getHomeData['title'],
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold),
+                                                    textAlign: TextAlign.start),
+                                                Padding(padding: EdgeInsets.only(top: 5)),
+                                                Text(
+                                                    getHomeData['author'],
+                                                    textAlign: TextAlign.start,
+                                                    style: TextStyle(
+                                                        color: Colors.black45,
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.w100)),
+                                                Padding(padding: EdgeInsets.only(top: 15)),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            }).toList(),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else {
+                          return CircularProgressIndicator();
+                        }
+                      }),
                 ),
               ),
               Padding(padding: EdgeInsets.all(10)),
@@ -309,13 +377,12 @@ class HomeStatelessWidget extends StatelessWidget{
 }
 
 Future<List<Map<String, dynamic>>> _fetchData() async {
-
   final httpClient = IOClient();
   final userResponse = await httpClient.get(
-    Uri.parse('$logApiKey/main'),
-    headers: <String, String>{
-      'Authorization': 'Bearer $token'
-    });
+      Uri.parse('$logApiKey/main'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
   //
   // if (kDebugMode) {
   //   print('확인!!!!:$token');
@@ -323,9 +390,6 @@ Future<List<Map<String, dynamic>>> _fetchData() async {
   var usertest = jsonDecode(utf8.decode(userResponse.bodyBytes));
   // final response = await client.get(Uri.parse(tmdbApiKey + '/main/4'));
   // var data = jsonDecode(utf8.decode(response.bodyBytes));
-
   List<Map<String, dynamic>> listData = [usertest]; // data를 리스트로 감싸기
-
   return listData;
 }
-

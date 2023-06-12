@@ -41,6 +41,7 @@ class BookMapList extends StatefulWidget {
 }
 
 class _BookMapList extends State<BookMapList> {
+  bool showButton = true;
   final _authentication = firebaseauth.FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
@@ -212,7 +213,8 @@ class Scrap extends StatelessWidget{
 class ScrapList extends StatelessWidget{
   ScrapList({Key? key}) : super(key: key);
   Widget build(BuildContext context){
-    return  Container(
+    return  Scaffold(
+      body: Container(
       height: double.maxFinite,
       child: FutureBuilder<List<dynamic>>(
         future: _getScrap(),

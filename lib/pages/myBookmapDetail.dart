@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,14 +15,23 @@ class myMapDetail extends StatelessWidget{
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: _BookmapEx(myBookmap),
+      home: _myMapDetail(myBookmap),
     );
   }
 }
 
-class _BookmapEx extends StatelessWidget{
+class _myMapDetail extends StatefulWidget{
+  var mapId;
+  _myMapDetail(this.mapId, {super.key});
+
+  @override
+  State<StatefulWidget> createState() => _BookmapEx(mapId);
+
+}
+
+class _BookmapEx extends State<_myMapDetail>{
   var myBookmap;
-  _BookmapEx(this.myBookmap, {super.key});
+  _BookmapEx(this.myBookmap);
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +46,13 @@ class _BookmapEx extends StatelessWidget{
     }
     var keyword = myBookmap['hashTag'];
     var share = myBookmap['share'];
-
+    List<String> tags = [];
+    if (keyword.length != 0){
+      for (int i = 0; keyword.length > i; i++){
+        tags.add("#" + keyword[i]);
+      }
+    }
     return Scaffold(
-
       body: SingleChildScrollView(
         child: Column(
               children: [
@@ -54,7 +66,7 @@ class _BookmapEx extends StatelessWidget{
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(keyword.toString(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic, color: Colors.deepPurple),),
+                      Text(tags.join(" "), style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic, color: Colors.deepPurple),),
                       Padding(padding: EdgeInsets.all(2)),
                       Text(content.toString(),
                         style: TextStyle(fontSize: 13,color: Colors.black54),
@@ -97,7 +109,7 @@ class _BookmapEx extends StatelessWidget{
                               var detailBooks = detailContents['map'];
                               var detailMemo = detailContents['memo'];
 
-                              if(detailMemo == null){
+                              if("Book".compareTo(detailType) == 0){
                                 int num = detailBooks.length;
                                 List<String> books = [];
                                 for (int i = 0; i < num ; i++){

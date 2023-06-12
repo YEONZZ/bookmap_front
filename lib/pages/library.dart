@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:bookmap/login.dart';
+import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -10,12 +11,14 @@ import 'profile.dart';
 import '../design/color.dart';
 
 void main() {
+  // 메인화면에서 대표 4권 선택시 출력됨
   runApp(Library(token));
 }
 
 class Library extends StatelessWidget {
-  static const String _title = 'Widget Example';
   const Library(token, {super.key});
+
+  static const String _title = 'Widget Example';
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,13 @@ class FirstPage extends StatefulWidget {
 
 class _FirstPage extends State<FirstPage> {
   final _authentication = firebaseauth.FirebaseAuth.instance;
+  late Future<List<dynamic>> fetchData; // Declare the Future
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData = _fetchData(); // Declare the Future
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,27 +83,246 @@ class _FirstPage extends State<FirstPage> {
         ),
         body: TabBarView(
           children: [
-            FutureBuilder<List<dynamic>>(
+            FutureBuilder<List<dynamic>>( //전체 탭
               future: _fetchData(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List books = snapshot.data ?? [];
+                  print(books);
                   return ListView.builder(
                     itemCount: books.length,
                     itemBuilder: (context, index) {
                       Map<String, dynamic> book = books[index] as Map<String, dynamic>;
-                      //print(books); //정보 찍어보기
                       var img = book['image'];
                       var title = book['title'];
                       var author = book['author'];
                       var startDate = book['startDate'];
                       var endDate = book['endDate'];
+                      var isbn = book['isbn'];
+                      var grade = book['grade'];
                       return GestureDetector(
                         onTap: () {
-                          //눌렀을 때 옵션
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchDetailGetPage(homeIsbn: isbn,),
+                            ),
+                          );
                         },
                         child: Container(
-                          margin: EdgeInsets.only(top: 10),
+                            margin: EdgeInsets.only(left:10, right: 10, top: 10),
+                            width: MediaQuery.of(context).size.width - 20,
+                            height: MediaQuery.of(context).size.height * 0.2,
+                            decoration: BoxDecoration(
+                              color: appcolor.shade50,
+                              borderRadius: BorderRadius.all(Radius.circular(16)),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  child: Image.network(
+                                      img,
+                                      width: 90,
+                                      height: 120,
+                                      fit: BoxFit.fitHeight),
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.6,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                          title,
+                                          style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.start),
+                                      Padding(padding: EdgeInsets.only(top: 5)),
+                                      Text(
+                                          author,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              color: Colors.black45,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500)),
+                                      Padding(padding: EdgeInsets.only(top: 15)),
+                                      Text(
+                                          '별점: $grade',
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w300)),
+                                      Padding(padding: EdgeInsets.only(top: 5)),
+                                      Text(
+                                          '시작일: ${startDate}, 완독일: ${endDate}',
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w400))
+                                    ],
+                                  ),
+                                )
+                              ],
+                            )
+                        ),
+                      );
+                    },
+                  );
+                }  else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return CircularProgressIndicator();}
+              },
+            ),
+            FutureBuilder<List<dynamic>>(
+              future: fetchData, // fetchData 변수를 사용하여 데이터 가져오기
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List books = snapshot.data ?? [];
+                  // "읽은" 도서들만 추려내는 작업
+                  List<Map<String, dynamic>> readBooks = [];
+                  for (var book in books) {
+                    var bookState = book['bookState'];
+                    if (bookState == '읽은') {
+                      readBooks.add(book);
+                    }
+                  }
+                  return ListView.builder(
+                    itemCount: readBooks.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> book = readBooks[index] as Map<String, dynamic>;
+                      var img = book['image'];
+                      var title = book['title'];
+                      var author = book['author'];
+                      var startDate = book['startDate'];
+                      var endDate = book['endDate'];
+                      var isbn = book['isbn'];
+                      var grade = book['grade'];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SearchDetailGetPage(homeIsbn: isbn),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(left:10, right: 10, top: 10),
+                            width: MediaQuery.of(context).size.width - 20,
+                            height: MediaQuery.of(context).size.height * 0.2,
+                            decoration: BoxDecoration(
+                              color: appcolor.shade50,
+                              borderRadius: BorderRadius.all(Radius.circular(16)),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  child: Image.network(
+                                    img,
+                                    width: 90,
+                                    height: 120,
+                                    fit: BoxFit.fitHeight,
+                                  ),
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * 0.6,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        title,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      Padding(padding: EdgeInsets.only(top: 5)),
+                                      Text(
+                                        author,
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          color: Colors.black45,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      Padding(padding: EdgeInsets.only(top: 15)),
+                                      Text(
+                                        '별점: $grade',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                      ),
+                                      Padding(padding: EdgeInsets.only(top: 5)),
+                                      Text(
+                                        '시작일: $startDate, 완독일: $endDate',
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          color: Colors.black54,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                    },
+                  );
+
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+            ),
+            FutureBuilder<List<dynamic>>(
+              future: fetchData, // fetchData 변수를 사용하여 데이터 가져오기
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List books = snapshot.data ?? [];
+                  // "읽고 있는" 도서들만 추려내는 작업
+                  List<Map<String, dynamic>> readBooks = [];
+                  for (var book in books) {
+                    var bookState = book['bookState'];
+                    if (bookState == '읽는중인') {
+                      readBooks.add(book);
+                    }
+                  }
+                  return ListView.builder(
+                    itemCount: readBooks.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> book = readBooks[index] as Map<String, dynamic>;
+                      var img = book['image'];
+                      var title = book['title'];
+                      var author = book['author'];
+                      var startDate = book['startDate'];
+                      var isbn = book['isbn'];
+                      var grade = book['grade'];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchDetailGetPage(homeIsbn: isbn),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left:10, right: 10, top: 10),
                           width: MediaQuery.of(context).size.width - 20,
                           height: MediaQuery.of(context).size.height * 0.2,
                           decoration: BoxDecoration(
@@ -105,10 +334,11 @@ class _FirstPage extends State<FirstPage> {
                               Container(
                                 margin: EdgeInsets.only(left: 10, right: 10),
                                 child: Image.network(
-                                    img,
-                                    width: 90,
-                                    height: 120,
-                                    fit: BoxFit.fitHeight),
+                                  img,
+                                  width: 90,
+                                  height: 120,
+                                  fit: BoxFit.fitHeight,
+                                ),
                               ),
                               Container(
                                 width: MediaQuery.of(context).size.width * 0.6,
@@ -117,51 +347,150 @@ class _FirstPage extends State<FirstPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                        title,
-                                        style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.start),
+                                      title,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                    ),
                                     Padding(padding: EdgeInsets.only(top: 5)),
                                     Text(
-                                        author,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: Colors.black45,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w100)),
+                                      author,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: Colors.black45,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
                                     Padding(padding: EdgeInsets.only(top: 15)),
-                                    Text('⭐⭐⭐⭐⭐',
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w100)),
+                                    Text(
+                                      '$grade', //퍼센테이지로 변경
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w100,
+                                      ),
+                                    ),
                                     Padding(padding: EdgeInsets.only(top: 5)),
                                     Text(
-                                        '시작일: ${startDate}, 완독일: ${endDate}',
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                            color: Colors.black54,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w100))
+                                      '시작일: $startDate',
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              )
+                              ),
                             ],
-                          )
+                          ),
                         ),
                       );
                     },
                   );
-                }  else if (snapshot.hasError) {
+
+                } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 } else {
-                  return CircularProgressIndicator();}
+                  return CircularProgressIndicator();
+                }
               },
             ),
-            Text("읽은 책"),
-            Text("읽고 있는 책"),
-            Text("읽고싶은"),
+            FutureBuilder<List<dynamic>>(
+              future: fetchData, // fetchData 변수를 사용하여 데이터 가져오기
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  List books = snapshot.data ?? [];
+                  // "읽고싶은" 도서들만 추려내는 작업
+                  List<Map<String, dynamic>> readBooks = [];
+                  for (var book in books) {
+                    var bookState = book['bookState'];
+                    if (bookState == '읽고싶은') {
+                      readBooks.add(book);
+                    }
+                  }
+                  return ListView.builder(
+                    itemCount: readBooks.length,
+                    itemBuilder: (context, index) {
+                      Map<String, dynamic> book = readBooks[index] as Map<String, dynamic>;
+                      var img = book['image'];
+                      var title = book['title'];
+                      var author = book['author'];
+                      var isbn = book['isbn'];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SearchDetailGetPage(homeIsbn: isbn),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(left:10, right: 10, top: 10),
+                          width: MediaQuery.of(context).size.width - 20,
+                          height: MediaQuery.of(context).size.height * 0.2,
+                          decoration: BoxDecoration(
+                            color: appcolor.shade50,
+                            borderRadius: BorderRadius.all(Radius.circular(16)),
+                          ),
+                          child: Row(
+                            children: <Widget>[
+                              Container(
+                                margin: EdgeInsets.only(left: 10, right: 10),
+                                child: Image.network(
+                                  img,
+                                  width: 90,
+                                  height: 120,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      title,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                    ),
+                                    Padding(padding: EdgeInsets.only(top: 5)),
+                                    Text(
+                                      author,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: Colors.black45,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return CircularProgressIndicator();
+                }
+              },
+            ),
+
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -178,7 +507,7 @@ class _FirstPage extends State<FirstPage> {
 Future<List<Map<String, dynamic>>> _fetchData() async {
   http.Client client = http.Client();
 
-  final response = await client.get(Uri.parse(tmdbApiKey + '/bookshelf/allbooks/4'));
+  final response = await client.get(Uri.parse(tmdbApiKey + '/bookshelf/allbooks/1'));
   var data = jsonDecode(utf8.decode(response.bodyBytes));
 
   List<dynamic> listData = data;
