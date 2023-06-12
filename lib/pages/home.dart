@@ -266,8 +266,9 @@ class HomeStatelessWidget extends StatelessWidget{
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 12, right: 12, top:0),
+                padding: const EdgeInsets.only(left: 12, right: 12),
                 child: Container(
+                  padding: EdgeInsets.only(top:4, bottom: 5),
                   decoration: BoxDecoration(
                     color: appcolor.shade50,
                     borderRadius: BorderRadius.all(Radius.circular(16)),

@@ -4,6 +4,7 @@ import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import '../api_key.dart';
 import '../login.dart';
 import 'search.dart';
@@ -88,7 +89,7 @@ class _FirstPage extends State<FirstPage> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List books = snapshot.data ?? [];
-                  print(books);
+                  //print(books);
                   return ListView.builder(
                     itemCount: books.length,
                     itemBuilder: (context, index) {
@@ -100,6 +101,8 @@ class _FirstPage extends State<FirstPage> {
                       var endDate = book['endDate'];
                       var isbn = book['isbn'];
                       var grade = book['grade'];
+                      var bookState = book['bookState'];
+                      var readingPercentage = book['readingPercentage'];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -148,15 +151,35 @@ class _FirstPage extends State<FirstPage> {
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500)),
                                       Padding(padding: EdgeInsets.only(top: 15)),
-                                      Text(
-                                          '별점: $grade',
+                                      bookState == '읽은' && grade != null ?
+                                      Container(
+                                        child: Text(
+                                          '⭐' * grade.toInt(),
                                           textAlign: TextAlign.start,
                                           style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w300)),
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                      ) : Container(
+                                       child: Text('저장상태: $bookState',
+                                         style: TextStyle(
+                                           color: Colors.black45,
+                                           fontSize: 13,
+                                           fontWeight: FontWeight.w400,
+                                         ),),
+                                      ),
+                                      
                                       Padding(padding: EdgeInsets.only(top: 5)),
                                       Text(
-                                          '시작일: ${startDate}, 완독일: ${endDate}',
+                                          startDate != null ? '시작일: ${startDate}' : '',
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                              color: Colors.black54,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w400)),
+                                      Padding(padding: EdgeInsets.only(top: 5)),
+                                      Text(
+                                          endDate != null ? '완독일: ${endDate}' : '',
                                           textAlign: TextAlign.start,
                                           style: TextStyle(
                                               color: Colors.black54,
@@ -255,10 +278,10 @@ class _FirstPage extends State<FirstPage> {
                                       ),
                                       Padding(padding: EdgeInsets.only(top: 15)),
                                       Text(
-                                        '별점: $grade',
+                                        '⭐' * grade.toInt(),
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 18,
                                           fontWeight: FontWeight.w300,
                                         ),
                                       ),
@@ -312,6 +335,7 @@ class _FirstPage extends State<FirstPage> {
                       var startDate = book['startDate'];
                       var isbn = book['isbn'];
                       var grade = book['grade'];
+                      var readingPercentage = book['readingPercentage'];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -364,14 +388,15 @@ class _FirstPage extends State<FirstPage> {
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    Padding(padding: EdgeInsets.only(top: 15)),
-                                    Text(
-                                      '$grade', //퍼센테이지로 변경
-                                      textAlign: TextAlign.start,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w100,
-                                      ),
+                                    Padding(padding: EdgeInsets.only(top: 5)),
+                                    LinearPercentIndicator(
+                                      width: 230,
+                                      lineHeight: 15.0,
+                                      percent: 0.15,
+                                      center: Text('$readingPercentage%'),
+                                      barRadius: const Radius.circular(16),
+                                      progressColor: appcolor.shade600,
+                                      backgroundColor: Colors.white70,
                                     ),
                                     Padding(padding: EdgeInsets.only(top: 5)),
                                     Text(
