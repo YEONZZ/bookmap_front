@@ -8,9 +8,10 @@ import 'package:http/io_client.dart';
 import 'dart:convert';
 import '../api_key.dart';
 import '../design/color.dart';
+import '../login.dart';
 int check = 0;
 class Search extends StatelessWidget {
-  const Search({super.key});
+  const Search(token, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -436,7 +437,11 @@ Future<List> getBookMapData(editingController) async {
 
 Future<Map<String, dynamic>> _fetchISBN(kakaoIsbn) async {
   http.Client client = http.Client();
-  final response = await client.get(Uri.parse(tmdbApiKey + '/bookdetail/1?isbn='+'${kakaoIsbn}'));
+  final response = await client.get(Uri.parse(tmdbApiKey + '/book/detail?isbn='+'${kakaoIsbn}'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
+  print(token);
   var searchData = jsonDecode(utf8.decode(response.bodyBytes));
 
   return searchData;
@@ -444,7 +449,10 @@ Future<Map<String, dynamic>> _fetchISBN(kakaoIsbn) async {
 
 Future<bool> trueFalse(kakaoIsbn) async {
   http.Client client = http.Client();
-  final response = await client.get(Uri.parse(tmdbApiKey + '/book/savedornot/1?isbn='+'${kakaoIsbn}'));
+  final response = await client.get(Uri.parse(tmdbApiKey + '/book/savedornot?isbn='+'${kakaoIsbn}'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
   var data = jsonDecode(utf8.decode(response.bodyBytes));
 
   return data;

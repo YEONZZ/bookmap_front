@@ -31,7 +31,7 @@ class BookMap extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {'/': (context) => BookMapList(),
-        '/search': (context) => Search(),
+        '/search': (context) => Search(token),
         '/new':(context) => MakingBookMap()
       });}}
 
@@ -296,7 +296,7 @@ class ScrapList extends StatelessWidget{
 Future<List<dynamic>> _getbookmap() async {
   final httpClient = IOClient();
   final bookmapResponse = await httpClient.get(
-      Uri.parse('$bookmapKey/bookmap/1'),
+      Uri.parse('$bookmapKey/bookmap/5'),
       //headers: <String, String>{
       //  'Authorization': 'Bearer $token'
       //}
