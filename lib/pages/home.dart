@@ -202,6 +202,7 @@ class HomeStatelessWidget extends StatelessWidget{
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   List<Map<String, dynamic>> jsonData = snapshot.data!;
+                  print(jsonData);
                   List<String> imageList = [];
 
                   for (var data in jsonData) {
@@ -209,6 +210,7 @@ class HomeStatelessWidget extends StatelessWidget{
                     List<dynamic> getHomeDatas = getData['bookMapResponseDtos'];
                     int num = getHomeDatas.length;
                     for (var getHomeData in getHomeDatas.sublist(0, num)) {
+                      print(getHomeDatas);
                       if (getHomeData['bookMapImage'] != null) {
                         imageList.add(getHomeData['bookMapImage'] as String);
                       }else{
@@ -216,19 +218,17 @@ class HomeStatelessWidget extends StatelessWidget{
                       }
                     }
                   }
-
                   print(imageList);
                   return CarouselSlider(
                     options: CarouselOptions(height: 150.0, autoPlay: true),
-                    items: imageList.map((imageUrl) {
+                    items: imageList.map((imageList) {
                       return Builder(
                         builder: (BuildContext context) {
                           return Container(
                             width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.symmetric(horizontal: 5.0),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: Image.network(imageUrl, fit: BoxFit.fitWidth),
+                              child: Image.network(imageList, fit: BoxFit.fitWidth),
                             ),
                           );
                         },
@@ -243,30 +243,6 @@ class HomeStatelessWidget extends StatelessWidget{
               },
             ),
           ),
-
-          /*
-              Padding(
-                padding: const EdgeInsets.only(left: 12.0, right: 12),
-                child: CarouselSlider(
-                  options: CarouselOptions(height: 150.0, autoPlay: true),
-                  items: imageList.map((image) {
-                    return Builder(
-                      builder: (BuildContext context) {
-                        return Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.symmetric(horizontal: 5.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10.0),
-                            child: image,
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
-                ),
-              ),
-
-               */
               Padding(
                 padding: const EdgeInsets.only(left: 12.0, right: 12.0, top: 24),
                 child: Row(
@@ -383,13 +359,7 @@ Future<List<Map<String, dynamic>>> _fetchData() async {
       headers: <String, String>{
         'Authorization': 'Bearer $token'
       });
-  //
-  // if (kDebugMode) {
-  //   print('확인!!!!:$token');
-  // }
   var usertest = jsonDecode(utf8.decode(userResponse.bodyBytes));
-  // final response = await client.get(Uri.parse(tmdbApiKey + '/main/4'));
-  // var data = jsonDecode(utf8.decode(response.bodyBytes));
   List<Map<String, dynamic>> listData = [usertest]; // data를 리스트로 감싸기
   return listData;
 }

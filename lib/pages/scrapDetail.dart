@@ -25,7 +25,7 @@ class _BookmapEx extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    print(myBookmap);
+    //print(myBookmap);
     var mapId = myBookmap['bookMapId'];
     var title = myBookmap['bookMapTitle'];
     //print("확인!!!!!!!!! $title");
@@ -38,7 +38,6 @@ class _BookmapEx extends StatelessWidget{
     var share = myBookmap['share'];
 
     return Scaffold(
-
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -144,7 +143,6 @@ class _BookmapEx extends StatelessWidget{
             ],
           ),
         )
-
     );
   }
 }
