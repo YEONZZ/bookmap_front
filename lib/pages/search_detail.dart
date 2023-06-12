@@ -26,7 +26,7 @@ String memoContent = '';
 
 class SearchDetailPage extends StatefulWidget {
   final dynamic searchData; //카카오 책 검색 후 받아오는 데이터
-  SearchDetailPage({this.searchData});
+  SearchDetailPage({this.searchData, required data});
 
   @override
   _SearchDetailPage createState() => _SearchDetailPage(searchData: searchData);

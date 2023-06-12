@@ -118,85 +118,85 @@ class _MyMapData extends State<MyMapData>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: FutureBuilder<List<dynamic>>(
-              future: _getbookmap(),
-              builder: (context, snapshot){
-                if (snapshot.hasData){
-                  List myBookmaps = snapshot.data!;
-                  //print(myBookmaps.length);
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: myBookmaps[0].length,
-                    itemBuilder: (context, index){
-                      //print(index);
-                      var myBookmap = myBookmaps[0][index];
-                      var mapId = myBookmap['bookMapId'];
-                      var title = myBookmap['bookMapTitle'];
-                      if(title == null){
-                        title = '';
-                      }
-                      //print("확인!!!!!!!!! $title");
-                      var content = myBookmap['bookMapContent'];
-                      if(content == null){
-                        content = '';
-                      }
-                      var bookmapimg = myBookmap['bookMapImage'];
-                      if (bookmapimg == null){
-                        bookmapimg = 'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832';
-                      }
-                      var keyword = myBookmap['hashTag'];
-                      var share = myBookmap['share'];
-                      return GestureDetector(
-                        onTap:(){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => myMapDetail(myBookmap),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 12.0),
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: appcolor.shade50,
-                              borderRadius: BorderRadius.all(Radius.circular(10)),
-                            ),
-                            child: Row(
-                              children: <Widget>[
-                                Image.network(bookmapimg,
-                                    height: 80,
-                                    width: 80,
-                                    fit: BoxFit.fitWidth),
-                                Padding(padding: EdgeInsets.only(right: 10)),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
-                                        textAlign: TextAlign.start),
-                                    const Text(''),
-                                    Text(content, textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
+        body: FutureBuilder<List<dynamic>>(
+          future: _getbookmap(),
+          builder: (context, snapshot){
+            print('확인!!!!!!!!!!');
+            if (snapshot.hasData){
+              List myBookmaps = snapshot.data!;
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: myBookmaps[0].length,
+                itemBuilder: (context, index){
+                  //print(index);
+                  var myBookmap = myBookmaps[0][index];
+                  var mapId = myBookmap['bookMapId'];
+                  var title = myBookmap['bookMapTitle'];
+                  if(title == null){
+                    title = '';
+                  }
+                  //print("확인!!!!!!!!! $title");
+                  var content = myBookmap['bookMapContent'];
+                  if(content == null){
+                    content = '';
+                  }
+                  var bookmapimg = myBookmap['bookMapImage'];
+                  if (bookmapimg == null){
+                    bookmapimg = 'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832';
+                  }
+                  var keyword = myBookmap['hashTag'];
+                  if(keyword == null){
+                    keyword = '';
+                  }
+                  var share = myBookmap['share'];
+                  return GestureDetector(
+                    onTap:(){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => myMapDetail(myBookmap),
                         ),
                       );
                     },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: appcolor.shade50,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Image.network(bookmapimg,
+                                height: 80,
+                                width: 80,
+                                fit: BoxFit.fitWidth),
+                            Padding(padding: EdgeInsets.only(right: 10)),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+                                    textAlign: TextAlign.start),
+                                const Text('', style: TextStyle(fontSize: 12),),
+                                Text(content, textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                   );
-                }
-                else if (snapshot.hasError){
-                  return Text('Error: ${snapshot.error}');
-                }
-                else{
-                  return CircularProgressIndicator();
-                }
-              },
-            )
+                },
+              );
+            }
+            else if (snapshot.hasError){
+              return Text('Error: ${snapshot.error}');
+            }
+            else{
+              return CircularProgressIndicator();
+            }
+          },
         ));
   }
 }
@@ -216,79 +216,78 @@ class ScrapList extends StatelessWidget{
     return  Scaffold(
       body: Container(
       height: double.maxFinite,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-              child: FutureBuilder<List<dynamic>>(
-                future: _getScrap(),
-                builder: (context, snapshot){
-                  if (snapshot.hasData){
-                    List myBookmaps = snapshot.data!;
-                    //print(myBookmaps.length);
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: myBookmaps[0].length,
-                      itemBuilder: (context, index){
-                        var myBookmap = myBookmaps[0][index];
-                        var mapId = myBookmap['bookMapId'];
-                        var title = myBookmap['bookMapTitle'];
-                        //print("확인!!!!!!!!! $title");
-                        var content = myBookmap['bookMapContent'];
-                        var bookmapimg = myBookmap['bookMapImage'];
-                        if (bookmapimg == null){
-                          bookmapimg = 'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832';
-                        }
-                        var keyword = myBookmap['hashTag'];
-                        var share = myBookmap['share'];
-                        return GestureDetector(
-                          onTap:(){
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ScrapDetail(myBookmap),
-                              ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 12.0),
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: appcolor.shade50,
-                                borderRadius: BorderRadius.all(Radius.circular(10)),
-                              ),
-                              child: Row(
-                                children: <Widget>[
-                                  Image.network(bookmapimg,
-                                      height: 80,
-                                      width: 80,
-                                      fit: BoxFit.fitWidth),
-                                  Padding(padding: EdgeInsets.only(right: 10)),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
-                                          textAlign: TextAlign.start),
-                                      const Text(''),
-                                      Text(content, textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                  else if (snapshot.hasError){
-                    return Text('Error: ${snapshot.error}');
-                  }
-                  else{
-                    return CircularProgressIndicator();
-                  }
-                },
-              )
-          ),
+      child: FutureBuilder<List<dynamic>>(
+        future: _getScrap(),
+        builder: (context, snapshot){
+          if (snapshot.hasData){
+            List myBookmaps = snapshot.data!;
+            //print(myBookmaps.length);
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: myBookmaps[0].length,
+              itemBuilder: (context, index){
+                var myBookmap = myBookmaps[0][index];
+                var mapId = myBookmap['bookMapId'];
+                var title = myBookmap['bookMapTitle'];
+                //print("확인!!!!!!!!! $title");
+                var content = myBookmap['bookMapContent'];
+                var bookmapimg = myBookmap['bookMapImage'];
+                if (bookmapimg == null){
+                  bookmapimg = 'https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg.ssfshop.com%2Fcmd%2FLB_500x660%2Fsrc%2Fhttp%3A%2Fimg.ssfshop.com%2Fgoods%2FHMBR%2F19%2F04%2F08%2FGM0019040873391_7_ORGINL.jpg&type=sc960_832';
+                }
+                var keyword = myBookmap['hashTag'];
+                var share = myBookmap['share'];
+                return Material(
+                  type: MaterialType.transparency,
+                  child: GestureDetector(
+                    onTap:(){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ScrapDetail(myBookmap),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: appcolor.shade50,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Image.network(bookmapimg,
+                                height: 80,
+                                width: 80,
+                                fit: BoxFit.fitWidth),
+                            Padding(padding: EdgeInsets.only(right: 10)),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black,),
+                                    textAlign: TextAlign.start),
+                                const Text('', style: TextStyle(fontSize: 12),),
+                                Text(content, textAlign: TextAlign.start, style: TextStyle(color: Colors.black45, fontSize: 11, fontWeight: FontWeight.w100))
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          }
+          else if (snapshot.hasError){
+            return Text('Error: ${snapshot.error}');
+          }
+          else{
+            return CircularProgressIndicator();
+          }
+        },
       ),
     );
   }
