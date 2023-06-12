@@ -57,9 +57,6 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
             } else{
               final homeData = snapshot.data as Map<String, dynamic>;
               // homeData['startDate']와 현재 날짜 사이의 차이 계산
-              DateTime startDate = DateFormat("yyyy-MM-dd").parse(homeData['startDate']);
-              DateTime currentDate = DateTime.now();
-              Duration difference = currentDate.difference(startDate);
               return Scaffold(
                 backgroundColor: Colors.white,
                 appBar: AppBar(
@@ -333,7 +330,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                           ],
                         ),
                       ),
-                      _buildBookWidgets(homeData, difference),
+                      _buildBookWidgets(homeData),
                       Container( //북맵 알려주는 컨테이너
                         padding: EdgeInsets.only(left: 10, right: 10, top: 5),
                         height: 30,
@@ -556,8 +553,11 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
     );
   }
 
-  Widget _buildBookWidgets(Map<String, dynamic> homeData, Duration difference) {
+  Widget _buildBookWidgets(Map<String, dynamic> homeData) {
     if (homeData['bookState'] == '읽는중인') {
+      DateTime startDate = DateFormat("yyyy-MM-dd").parse(homeData['startDate']);
+      DateTime currentDate = DateTime.now();
+      Duration difference = currentDate.difference(startDate);
       return Column(
         children: [
           Container(
