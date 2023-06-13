@@ -216,6 +216,8 @@ class SumUp extends State<SumUpState> {
       children: [
         Padding(padding: EdgeInsets.only(top: 10)),
         Container(
+          width: double.maxFinite,
+          height: 140,
           padding: EdgeInsets.all(10),
           margin: EdgeInsets.all(10),
           decoration: BoxDecoration(
