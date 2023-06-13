@@ -299,9 +299,34 @@ class _bookmapEdit extends State<_EditingBookMap> {
                                             style: TextStyle(fontSize: 14,
                                                 color: Colors.black),),
                                           onPressed: () {
-                                            Navigator.of(context).pop();
+                                            
+                                          myBookMapDetail[0]['bookMapIndex'].add({
+                                            "type": "Book",
+                                            "map": [],
+                                            "memo": null
+                                          });
+                                          setState(() {
+                                            newMapDetail = myBookMapDetail;
+                                            change = true;
+                                          });
+                                          Navigator.of(context).pop();
                                           },
                                         ),
+                                        TextButton(
+                                        child: const Text('메모', style: TextStyle(fontSize: 14, color: Colors.black),),
+                                        onPressed: () {
+                                          myBookMapDetail[0]['bookMapIndex'].add({
+                                            "type": "Memo",
+                                            "map": null,
+                                            "memo": "메모를 입력해주세요."
+                                          });
+                                          setState(() {
+                                            newMapDetail = myBookMapDetail;
+                                            change = true;
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
                                       ],
                                     );
                                   }
@@ -377,7 +402,13 @@ class _bookmapEdit extends State<_EditingBookMap> {
                                   'https://postfiles.pstatic.net/MjAyMzA2MDlfMTUz/MDAxNjg2MzA5MTk2Njc1.e0lBE1zzXGIZIg03GQ6c-J2E6ahezLFCWsZMZWpolYAg.nomA0xkMNBmkhgZ8q84XIbwer4nE9_KxtBojTb_vYTMg.PNG.odb1127/image.png?type=w773');
                             }
                             return GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                myBookMapDetail[0]['bookMapIndex'].removeAt(index);
+                                setState(() {
+                                  newMapDetail = myBookMapDetail;
+                                  change = true;
+                                });
+                              },
                                 child: Container(
                                   height: 150,
                                   child: ListView.builder(
@@ -400,6 +431,7 @@ class _bookmapEdit extends State<_EditingBookMap> {
                                                   }
                                                 });
                                                 if (index1 == books.length - 1 && books.length != 5) {
+                                                  //원본 코드에는 dynamic newBook = ~~
                                                   Navigator.push(
                                                     context,
                                                     MaterialPageRoute(
@@ -418,27 +450,62 @@ class _bookmapEdit extends State<_EditingBookMap> {
                             );
                           }
                           else {
-                            // print('memo$detailMemo');
-                            return Container(
-                              decoration: BoxDecoration(
-                                color: Color(0xfff5eedc),),
+                            final TextEditingController _memoEditingController = TextEditingController();
+                            return GestureDetector(
+                            onTap: (){
+                              myBookMapDetail[0]['bookMapIndex'].removeAt(index);
+                              setState(() {
+                                newMapDetail = myBookMapDetail;
+                                change = true;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(color: Color(0xfff5eedc),),
                               height: 130,
                               child: Row(
                                 children: [
                                   Expanded(
-                                    flex: 1,
-                                    child: Icon(
-                                        Icons.arrow_downward, size: 100),
+                                    flex: 3,
+                                    child: Icon(Icons.arrow_downward, size: 100),
                                   ),
                                   Expanded(
-                                    flex: 3,
-                                    child: Text(detailMemo,
-                                      style: TextStyle(fontSize: 12),
-                                      textAlign: TextAlign.center,),
+                                    flex: 5,
+                                    child: TextField(
+                                      onChanged: (text){
+                                        detailContents['memo'] = text;
+                                      },
+                                      style: TextStyle(color: Colors.black, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                                      cursorColor: appcolor,
+                                      textInputAction: TextInputAction.done,
+                                      controller: _memoEditingController,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(width: 2, color: appcolor.shade600)
+                                        ),
+                                        suffixIcon: GestureDetector(
+                                          child: const Icon(
+                                            Icons.cancel,
+                                            color: appcolor,
+                                            size: 20,
+                                          ),
+                                          onTap: () => _memoEditingController.clear(),
+                                        ),
+                                        labelText: detailMemo,
+                                        labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                                        hintText: detailMemo,
+                                        hintStyle: TextStyle(color: Colors.black38, fontSize: 14, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                                      ),
+                                    )
                                   ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Padding(padding: EdgeInsets.all(1)),
+                                  )
                                 ],
                               ),
-                            );
+                            ),
+                          );
                           }
                         },
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount
