@@ -2,7 +2,6 @@ import 'package:bookmap/pages/editingBookMap.dart';
 import 'package:bookmap/pages/search_detail.dart';
 import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:flutter/foundation.dart';
-import '../login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
@@ -13,9 +12,7 @@ import 'bookmap_example.dart';
 
 int check = 0;
 class SearchInBookMap extends StatelessWidget {
-  int mapIndex;
-  dynamic myBookmap;
-  SearchInBookMap(this.mapIndex, this.myBookmap);
+  SearchInBookMap(mapId);
 
   // final mapId;
   // const SearchInBookMap(this.mapId, {super.key});
@@ -25,22 +22,18 @@ class SearchInBookMap extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HttpAppSB(this.mapIndex, this.myBookmap),
+      home: HttpApp(),
     );
   }
 }
 
-class HttpAppSB extends StatefulWidget {
-  var mapIndex;
-  var myBookmap;
-  HttpAppSB(this.mapIndex, this.myBookmap);
+class HttpApp extends StatefulWidget {
+
   @override
-  State<StatefulWidget> createState() => _HttpAppSB(mapIndex, myBookmap);
+  State<StatefulWidget> createState() => _HttpApp();
 }
 
-class _HttpAppSB extends State<HttpAppSB> with SingleTickerProviderStateMixin{
-  var mapIndex;
-  var myBookmap;
+class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
   late TabController _tabController;
   late TextEditingController? _editingController;
   ScrollController? _scrollController;
@@ -48,8 +41,6 @@ class _HttpAppSB extends State<HttpAppSB> with SingleTickerProviderStateMixin{
   int page = 1;
   final FocusNode _focusNode = FocusNode();
   String? searchQuery;
-
-  _HttpAppSB(this.mapIndex, this.myBookmap);
 
   @override
   void initState() {
@@ -79,6 +70,7 @@ class _HttpAppSB extends State<HttpAppSB> with SingleTickerProviderStateMixin{
             _scrollController!.position.maxScrollExtent &&
             !_scrollController!.position.outOfRange) {
           page++;
+          getBookMapData(_editingController);
         }
       }}
     );
@@ -120,10 +112,14 @@ class _HttpAppSB extends State<HttpAppSB> with SingleTickerProviderStateMixin{
                           FocusScope.of(context).unfocus();
                           setState(() {
                             _isLoading = true;
+                            if(_tabController.index == 1){
+                              getBookMapData(_editingController);
+                            }
                           });
                           page = 1;
                           data!.clear();
                           await getJSONData();
+                          await getBookMapData(_editingController);
 
                           setState(() {
                             _isLoading = false;
@@ -194,15 +190,8 @@ class _HttpAppSB extends State<HttpAppSB> with SingleTickerProviderStateMixin{
                             return GestureDetector(
                               onTap: () async {
                                 var searchData = await _fetchISBN(kakaoIsbn);
-                                var isbn = searchData['isbn'].toString();
-                                var image = searchData['image'].toString();
-                                var mapId = myBookmap['bookMapId'];
-                                myBookmap['bookMapIndex'][mapIndex]['map'].add({
-                                      "id" : null,
-                                      "isbn" : isbn,
-                                      "image" : image});
-                                Navigator.pushReplacement(context, MaterialPageRoute(
-                                    builder: (context) => EditingBookMap(mapId, searchData: myBookmap,)))
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => EditingBookMap(mapId, searchData: searchData,)))
                                     .then((value) => setState(() {}));
                                 //print('카카오isbn: ${kakaoIsbn}');
                                 //print('검색결과: ${searchData}');
@@ -296,21 +285,6 @@ class _HttpAppSB extends State<HttpAppSB> with SingleTickerProviderStateMixin{
       data!.addAll(result);
     });
     return response.body;
-  }
-  Future<String> _postExtra(mapId, myBookMapDetail) async {
-    final response = await http.post(
-      Uri.parse('$bookmapKey/bookmap/extra/save/$mapId'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(myBookMapDetail),
-    );
-    if (response.statusCode == 200) {
-      return response.body;
-    }
-    else
-      throw Exception(" 오류 ");
   }
 }
 
@@ -435,6 +409,28 @@ class _LoadingIndicatorState extends State<LoadingIndicator> {
   }
 }
 
+Future<List> getBookMapData(editingController) async {
+  print("!!!!!!!!!!!!!!!!!!!${editingController.value}");
+  final httpClient = IOClient();
+  final bookmapResponse = await httpClient.get(
+      Uri.parse('$bookmapKey/bookmap/search/${editingController!.value.text}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json'
+        //  'Authorization': 'Bearer $token'
+      }
+  );
+  //print(response.body); // 검색 결과 로그창으로 확인
+
+  List bookmapList = jsonDecode(utf8.decode(bookmapResponse.bodyBytes));
+
+  if (kDebugMode) {
+    print(bookmapList);
+  }
+
+  List<dynamic> listData = [bookmapList]; // data를 리스트로 감싸기
+
+  return listData;
+}
 
 Future<Map<String, dynamic>> _fetchISBN(kakaoIsbn) async {
   http.Client client = http.Client();
