@@ -262,9 +262,7 @@ class _SearchDetailPage extends State<SearchDetailPage> {
                         );
                       },
                     );
-                  } else if (value == 2) { // 북맵에 추가 로직 구현
-                    
-                  } else if ( value == 3 ){  // 메모 저장 버튼 터치
+                  } else if ( value == 2 ){  // 메모 저장 버튼 터치
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -287,9 +285,7 @@ class _SearchDetailPage extends State<SearchDetailPage> {
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
                   PopupMenuItem(value: 1, child: Text('책 저장'),),
                   PopupMenuDivider(),
-                  PopupMenuItem(value: 2, child: Text('북맵에 추가')),
-                  PopupMenuDivider(),
-                  PopupMenuItem(value: 3, child: Text('메모 추가')),
+                  PopupMenuItem(value: 2, child: Text('메모 추가')),
                 ],
               )
               //책 분류 버튼
