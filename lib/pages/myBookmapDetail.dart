@@ -34,6 +34,21 @@ class _myMapDetail extends StatefulWidget{
 class _BookmapEx extends State<_myMapDetail>{
   var myBookmap;
   _BookmapEx(this.myBookmap);
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    refreshList();
+  }
+
+  Future<Null> refreshList() async{
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(microseconds: 5));
+    setState(() {
+    });
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
