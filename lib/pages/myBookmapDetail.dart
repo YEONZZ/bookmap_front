@@ -34,7 +34,20 @@ class _myMapDetail extends StatefulWidget{
 class _BookmapEx extends State<_myMapDetail>{
   var myBookmap;
   _BookmapEx(this.myBookmap);
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
+  @override
+  void initState() {
+    super.initState();
+    refreshList();
+  }
+  Future<Null> refreshList() async{
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds:0));
+    setState(() {
+    });
+    return null;
+  }
   @override
   Widget build(BuildContext context) {
     //print(myBookmap);
@@ -101,7 +114,7 @@ class _BookmapEx extends State<_myMapDetail>{
                       TextButton(onPressed: () async {
                         _deleteMap(mapId);
                         await Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => BookMap(token))
+                          context, MaterialPageRoute(builder: (context) => MyBookmap())
                         ).then((value) {});
                       }, child: Text('DELETE',
                         style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),))
