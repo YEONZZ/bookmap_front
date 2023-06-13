@@ -392,7 +392,7 @@ class _FirstPage extends State<FirstPage> {
                                     LinearPercentIndicator(
                                       width: 230,
                                       lineHeight: 15.0,
-                                      percent: 0.15,
+                                      percent: double.parse('0.$readingPercentage'),
                                       center: Text('$readingPercentage%'),
                                       barRadius: const Radius.circular(16),
                                       progressColor: appcolor.shade600,

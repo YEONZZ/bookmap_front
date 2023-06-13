@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:bookmap/pages/bookmap.dart';
 import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
 import '../api_key.dart';
+import '../design/color.dart';
 import '../login.dart';
 import 'editingBookMap.dart';
 
@@ -53,9 +55,47 @@ class _BookmapEx extends StatelessWidget{
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    IconButton(onPressed: (){
-                      postScrap(mapId);
-                    }, icon: Icon(Icons.add_box)),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 5),
+                      width: 80,
+                      height: 30,
+                      child: FloatingActionButton.extended(
+                        backgroundColor: Color(0xffe5a872),
+                        elevation: 0,
+                        icon: const Icon(Icons.add),
+                        label: Text('스크랩'),
+                        onPressed: () async {
+                          await postScrap(mapId);
+                          print('스크랩 성공');
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('저장 완료'),
+                                content: Text('북맵 스크랩에 저장 되었습니다.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      // 화면을 다시 로드합니다.
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) => BookMap(token),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      '확인',
+                                      style: TextStyle(color: appcolor.shade700),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
                     Text(keyword.toString(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic, color: Colors.deepPurple),),
                     Padding(padding: EdgeInsets.all(2)),
                     Text(content.toString(),
