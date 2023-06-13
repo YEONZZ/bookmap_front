@@ -122,7 +122,7 @@ class _MyMapData extends State<MyMapData>{
 
   Future<Null> refreshList() async{
     refreshKey.currentState?.show(atTop: false);
-    await Future.delayed(Duration(seconds:0));
+    await Future.delayed(Duration(microseconds: 2));
     setState(() {
     });
     return null;
