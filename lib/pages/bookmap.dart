@@ -1,8 +1,5 @@
 import 'dart:convert';
-
-
 import 'package:bookmap/api_key.dart';
-import 'package:bookmap/pages/editingBookMap.dart';
 import 'package:bookmap/pages/scrapDetail.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/foundation.dart';
@@ -101,12 +98,14 @@ class _MyMapData extends State<MyMapData>{
   ScrollController? _scrollController;
   List? data;
   int page = 1;
+  var refreshKey = GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState(){
 
     //WidgetsBinding.instance.addObserver(this as WidgetsBindingObserver);
     super.initState();
+    refreshList();
     data = List.empty(growable: true);
     _scrollController = ScrollController();
     _scrollController!.addListener(() {
@@ -119,6 +118,14 @@ class _MyMapData extends State<MyMapData>{
         page ++;
         //getJSONData(); 과 같이 데이터를 불러오는 것
     }});
+  }
+
+  Future<Null> refreshList() async{
+    refreshKey.currentState?.show(atTop: false);
+    await Future.delayed(Duration(seconds:0));
+    setState(() {
+    });
+    return null;
   }
 
   @override
@@ -205,6 +212,7 @@ class _MyMapData extends State<MyMapData>{
         ));
   }
 }
+
 
 class Scrap extends StatelessWidget{
   Widget build(BuildContext context){
