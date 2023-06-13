@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
 import '../api_key.dart';
 import '../design/color.dart';
+import '../login.dart';
+import 'bookmap.dart';
 import 'editingBookMap.dart';
 
 class myMapDetail extends StatelessWidget{
@@ -59,14 +61,15 @@ class _BookmapEx extends State<_myMapDetail>{
                 Container(
                   padding: EdgeInsets.only(top: 35, right: 15, left: 15, bottom: 15),
                   //decoration: BoxDecoration(),
-                  color: Colors.orange.shade200,
+                  color: Color(0xfff5eedc),
                   width: double.infinity,
                   height: 170,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(tags.join(" "), style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic, color: Colors.deepPurple),),
+                      Text(tags.join(" "), style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic, color: Color(
+                          0xFF7A5640)),),
                       Padding(padding: EdgeInsets.all(2)),
                       Text(content.toString(),
                         style: TextStyle(fontSize: 13,color: Colors.black54),
@@ -87,8 +90,11 @@ class _BookmapEx extends State<_myMapDetail>{
                       );
                     }, child: Text('EDIT',
                       style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),)),
-                    TextButton(onPressed: (){
+                    TextButton(onPressed: () async {
                       _deleteMap(mapId);
+                      await Navigator.push(
+                        context, MaterialPageRoute(builder: (context) => BookMap(token))
+                      ).then((value) {});
                     }, child: Text('DELETE',
                       style: TextStyle(fontSize: 14, color: Colors.black87, decoration: TextDecoration.underline),))
                   ],
@@ -142,7 +148,7 @@ class _BookmapEx extends State<_myMapDetail>{
                               else{
                                 print('memo$detailMemo');
                                 return Container(
-                                        decoration: BoxDecoration(color: Colors.orange.shade50),
+                                        decoration: BoxDecoration(color: Color(0xfff5eedc),),
                                         height: 130,
                                         child: Row(
                                           children: [

@@ -620,6 +620,9 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
           String dateTimeString = homeData['bookMemoResponseDtos'][index]['saved'];
           DateTime dateTime = DateTime.parse(dateTimeString);
 
+          String memoId = homeData['bookMemoResponseDtos'][index]['id'].toString();
+          print("메모 아이디: $memoId");
+
           int year = dateTime.year;
           int month = dateTime.month;
           int day = dateTime.day;
@@ -643,14 +646,19 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                            onPressed: (){},
+                            onPressed: (){
+                              memoUpdate(context, homeData['bookMemoResponseDtos'][index]['content'],
+                                  homeData['bookMemoResponseDtos'][index]['page'], memoId);
+                            },
                             child: Text(
                                 '수정',
                               style: TextStyle(color: appcolor.shade700),
                             )
                         ),
                         TextButton(
-                            onPressed: (){},
+                            onPressed: (){
+                              deleteMemo(context, memoId, homeIsbn);
+                            },
                             child: Text(
                                 '삭제',
                               style: TextStyle(color: appcolor.shade700),
@@ -759,6 +767,103 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
               onPressed: () async {
                 await savePerfomance(homeIsbn);
                 print('메모 post 성공');
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('알림'),
+                      content: Text('저장 되었습니다.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            // 화면을 다시 로드합니다.
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => SearchDetailGetPage(homeIsbn: homeIsbn,),
+                              ),
+                            );
+                          },
+                          child: Text('확인', style: TextStyle(color: appcolor.shade700),),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Text('저장'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<dynamic> memoUpdate(BuildContext context, content, page, memoId) async { //메모 수정 함수
+    var updateContent;
+    var updatePage;
+    return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            '메모 수정하기',
+            textAlign: TextAlign.center,
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  maxLines: null, // 여러 줄 입력을 가능하게 합니다.
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(hintText: '$content'),
+                  onChanged: (value) {
+                    setState(() {
+                      content = value;
+                      updateContent = value;
+                    });
+                  },
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.only(right: 10),
+                        child: TextField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(hintText: '$page'),
+                          onChanged: (value) {
+                            setState(() {
+                              page = int.parse(value);
+                              updatePage = int.parse(value);
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      child: Text('쪽'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                '취소',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+
+                await updateMemo(context, updateContent, updatePage ,memoId);
+                print('메모 수정post 성공');
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
@@ -915,11 +1020,10 @@ Future<Map<String, dynamic>> _getISBN(homeIsbn) async { //상세정보 가져오
 
 Future<void> deleteBook(BuildContext context, homeIsbn) async {
   http.Client client = http.Client();
-  final response = client.delete(Uri.parse(tmdbApiKey + '/book/delete?isbn='+'${homeIsbn}'),
+  final response = await client.delete(Uri.parse(tmdbApiKey + '/book/delete?isbn='+'${homeIsbn}'),
       headers: <String, String>{
         'Authorization': 'Bearer $token'
       });
-
   // 특정 작업 수행
   showDialog(
     context: context,
@@ -934,6 +1038,78 @@ Future<void> deleteBook(BuildContext context, homeIsbn) async {
                 context,
                 MaterialPageRoute(
                   builder: (BuildContext context) => MyApp(token),
+                ),
+              );
+            },
+            child: Text('확인', style: TextStyle(color: appcolor.shade700)),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+
+Future<void> updateMemo(BuildContext context, content, page, memoId) async {
+  print(content);
+  print(page);
+  print(memoId);
+  http.Client client = http.Client();
+  final response = await client.post(Uri.parse(tmdbApiKey + '/bookmemo/update/$memoId'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json', // Content-Type 설정
+      },
+    body: jsonEncode({
+      "content": content,
+      "page": page,
+    }));
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('수정'),
+        content: Text('수정되었습니다.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MyApp(token),
+                ),
+              );
+            },
+            child: Text('확인', style: TextStyle(color: appcolor.shade700)),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+Future<void> deleteMemo(BuildContext context, memoId, homeIsbn) async {
+  print("함수내 $memoId");
+
+  http.Client client = http.Client();
+  final response = await client.delete(Uri.parse(tmdbApiKey + '/bookmemo/delete/$memoId'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      });
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('삭제'),
+        content: Text('삭제되었습니다.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => SearchDetailGetPage(homeIsbn: homeIsbn,),
                 ),
               );
             },
@@ -1027,7 +1203,7 @@ class BookScreenState extends State<BookScreen> {
             ),
             Container( //시작일 컨테이너
               margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              height: MediaQuery.of(context).size.height * 0.04,
+              height: 35,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1052,7 +1228,7 @@ class BookScreenState extends State<BookScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return Container(
-                              height: MediaQuery.of(context).size.height*0.35,
+                              height: 300,
                               child: Column(
                                 children: [
                                   SizedBox(
@@ -1137,7 +1313,7 @@ class BookScreenState extends State<BookScreen> {
             ),
             Container( //종료일 컨테이너
               margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              height: MediaQuery.of(context).size.height * 0.04,
+              height: 35,
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1162,7 +1338,7 @@ class BookScreenState extends State<BookScreen> {
                           context: context,
                           builder: (BuildContext context) {
                             return Container(
-                              height: MediaQuery.of(context).size.height*0.35,
+                              height: 300,
                               child: Column(
                                 children: [
                                   SizedBox(
@@ -1258,7 +1434,7 @@ class BookScreenState extends State<BookScreen> {
             ),
             Container(
               margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-              height: MediaQuery.of(context).size.height * 0.04,
+              height: 35,
               decoration: BoxDecoration(
                   border: Border.all(
                     width: 1.0,
@@ -1281,8 +1457,8 @@ class BookScreenState extends State<BookScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(top: 16.5),
-                          width: 50,
+                          margin: EdgeInsets.only(top: 16.3),
+                          width: 150,
                           child: TextField(
                             keyboardType: TextInputType.number,
                             decoration: InputDecoration(
@@ -1323,41 +1499,39 @@ class BookScreenState extends State<BookScreen> {
                       ),
                     ),
                   ), //평점 텍스트 끝
-                  Expanded(
-                    child: Container( //별 컨테이너
-                      child: RatingStars(
-                        value: starValue,
-                        onValueChanged: (v){
-                          setState(() {
-                            starValue = v;
-                            print('별점: $starValue');
-                          });
-                        },
-                        starBuilder: (index, color) => Icon(
-                          Icons.star,
-                          color: color,
-                          size: 35,
-                        ),
-                        starCount: 5,
-                        starSize: 30, //별 사이 간격
-                        valueLabelColor: const Color(0xff9b9b9b),
-                        valueLabelTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 12.0,),
-                        valueLabelRadius: 10,
-                        maxValue: 5,
-                        starSpacing: 1,
-                        maxValueVisibility: true,
-                        valueLabelVisibility: true,
-                        animationDuration: Duration(milliseconds: 1000),
-                        valueLabelPadding:
-                        const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
-                        valueLabelMargin: const EdgeInsets.only(right: 8),
-                        starOffColor: const Color(0xffe7e8ea),
-                        starColor: Colors.yellow,
+                  Container( //별 컨테이너
+                    child: RatingStars(
+                      value: starValue,
+                      onValueChanged: (v){
+                        setState(() {
+                          starValue = v;
+                          print('별점: $starValue');
+                        });
+                      },
+                      starBuilder: (index, color) => Icon(
+                        Icons.star,
+                        color: color,
+                        size: 35,
                       ),
+                      starCount: 5,
+                      starSize: 30, //별 사이 간격
+                      valueLabelColor: const Color(0xff9b9b9b),
+                      valueLabelTextStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w400,
+                        fontStyle: FontStyle.normal,
+                        fontSize: 12.0,),
+                      valueLabelRadius: 10,
+                      maxValue: 5,
+                      starSpacing: 1,
+                      maxValueVisibility: true,
+                      valueLabelVisibility: true,
+                      animationDuration: Duration(milliseconds: 1000),
+                      valueLabelPadding:
+                      const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
+                      valueLabelMargin: const EdgeInsets.only(right: 8),
+                      starOffColor: const Color(0xffe7e8ea),
+                      starColor: Colors.yellow,
                     ),
                   ),
                 ],
@@ -1380,7 +1554,7 @@ class BookScreenState extends State<BookScreen> {
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            height: MediaQuery.of(context).size.height * 0.04,
+            height: 35,
             decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1403,8 +1577,8 @@ class BookScreenState extends State<BookScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        padding: EdgeInsets.only(top: 16.5),
-                        width: 50,
+                        margin: EdgeInsets.only(top: 16.3),
+                        width: 150,
                         child: TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -1445,7 +1619,7 @@ class BookScreenState extends State<BookScreen> {
           ),
           Container(
             margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            height: MediaQuery.of(context).size.height * 0.04,
+            height: 35,
             decoration: BoxDecoration(
                 border: Border.all(
                   width: 1.0,
@@ -1464,12 +1638,13 @@ class BookScreenState extends State<BookScreen> {
                   ),
                 ),
                 Expanded(
+                  flex:1,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        padding: EdgeInsets.only(top: 16.5),
-                        width: 50,
+                        margin: EdgeInsets.only(top: 16.3),
+                        width: 150,
                         child: TextField(
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
@@ -1509,7 +1684,7 @@ class BookScreenState extends State<BookScreen> {
           ),
           Container( //독서기간 컨테이너
             margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            height: MediaQuery.of(context).size.height * 0.04,
+            height: 35,
             decoration: BoxDecoration(
               border: Border.all(
                 width: 1.0,
@@ -1519,6 +1694,7 @@ class BookScreenState extends State<BookScreen> {
             child: Row(
               children: [
                 Expanded(
+                  flex:1,
                   child: Padding(
                     padding: EdgeInsets.only(left: 5),
                     child: Text(
@@ -1534,7 +1710,7 @@ class BookScreenState extends State<BookScreen> {
                         context: context,
                         builder: (BuildContext context) {
                           return Container(
-                            height: MediaQuery.of(context).size.height*0.35,
+                            height: 300,
                             child: Column(
                               children: [
                                 SizedBox(
