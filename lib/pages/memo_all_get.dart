@@ -21,7 +21,8 @@ class MemoGet extends StatelessWidget {
 class _MemoGet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(child:
+    Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
@@ -97,7 +98,12 @@ class _MemoGet extends StatelessWidget {
           }
         },
       ),
-    );
+    )
+    , onWillPop: () async {
+      Navigator.pop(context);
+      return false; // true를 반환하면 기본 뒤로 가기 동작 수행, false를 반환하면 뒤로 가기 동작 무시
+    });
+
   }
 }
 

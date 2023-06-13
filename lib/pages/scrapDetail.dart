@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/io_client.dart';
 import '../api_key.dart';
+import '../login.dart';
 import 'editingBookMap.dart';
 
 class ScrapDetail extends StatelessWidget{
@@ -41,8 +42,9 @@ class _BookmapEx extends StatelessWidget{
         body: SingleChildScrollView(
           child: Column(
             children: [
+
               Container(
-                padding: EdgeInsets.only(top: 35, right: 15, left: 15, bottom: 15),
+                padding: EdgeInsets.only(top: 20, right: 15, left: 15, bottom: 15),
                 //decoration: BoxDecoration(),
                 color: Color(0xfff5eedc),
                 width: double.infinity,
@@ -51,6 +53,9 @@ class _BookmapEx extends StatelessWidget{
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    IconButton(onPressed: (){
+                      postScrap(mapId);
+                    }, icon: Icon(Icons.add_box)),
                     Text(keyword.toString(), style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal, fontStyle: FontStyle.italic, color: Colors.deepPurple),),
                     Padding(padding: EdgeInsets.all(2)),
                     Text(content.toString(),
@@ -162,4 +167,14 @@ Future<List<dynamic>> _getMapDetail(mapId) async {
   dynamic listData = [mapDetailTest]; // data를 리스트로 감싸기
 
   return listData;
+}
+
+Future<void> postScrap(mapId) async{
+  final httpClient = IOClient();
+  final mapDetailResponse = await httpClient.post(
+    Uri.parse('$bookmapKey/bookmap/scrap/save/$mapId'),
+      headers: <String, String>{
+        'Authorization': 'Bearer $token'
+      }
+  );
 }
