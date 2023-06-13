@@ -8,11 +8,14 @@ import 'package:http/io_client.dart';
 import 'dart:convert';
 import '../api_key.dart';
 import '../design/color.dart';
+import 'bookmap_example.dart';
 
 int check = 0;
 class SearchInBookMap extends StatelessWidget {
-  final mapId;
-  const SearchInBookMap(this.mapId, {super.key});
+  SearchInBookMap(mapId);
+
+  // final mapId;
+  // const SearchInBookMap(this.mapId, {super.key});
   //Search({required this.screens});
   //final List<Widget> screens;
   @override
@@ -25,7 +28,7 @@ class SearchInBookMap extends StatelessWidget {
 }
 
 class HttpApp extends StatefulWidget {
-  const HttpApp({super.key});
+
   @override
   State<StatefulWidget> createState() => _HttpApp();
 }
@@ -187,10 +190,9 @@ class _HttpApp extends State<HttpApp> with SingleTickerProviderStateMixin{
                             return GestureDetector(
                               onTap: () async {
                                 var searchData = await _fetchISBN(kakaoIsbn);
-                                Navigator.pop(
-                                  context,
-                                  searchData,
-                                  );
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => EditingBookMap(mapId, searchData: searchData,)))
+                                    .then((value) => setState(() {}));
                                 //print('카카오isbn: ${kakaoIsbn}');
                                 //print('검색결과: ${searchData}');
                               },

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:js_util';
+
 
 import 'package:bookmap/api_key.dart';
 import 'package:bookmap/pages/editingBookMap.dart';
@@ -105,7 +105,7 @@ class _MyMapData extends State<MyMapData>{
   @override
   void initState(){
 
-    WidgetsBinding.instance.addObserver(this as WidgetsBindingObserver);
+    //WidgetsBinding.instance.addObserver(this as WidgetsBindingObserver);
     super.initState();
     data = List.empty(growable: true);
     _scrollController = ScrollController();

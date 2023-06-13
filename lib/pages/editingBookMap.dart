@@ -14,14 +14,16 @@ import '../api_key.dart';
 import '../design/color.dart';
 
 class EditingBookMap extends StatelessWidget {
-  var mapId;
-  EditingBookMap(this.mapId, {super.key});
+  dynamic mapId;
+  dynamic  searchData;
+
+  EditingBookMap(this.mapId, {this.searchData});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: _EditingBookMap(mapId),
+      home: _EditingBookMap(mapId, searchData: searchData,),
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: appcolor,
@@ -33,16 +35,18 @@ class EditingBookMap extends StatelessWidget {
 
 class _EditingBookMap extends StatefulWidget{
   var mapId;
-  _EditingBookMap(this.mapId, {super.key});
+  dynamic searchData;
+  _EditingBookMap(this.mapId, {this.searchData});
 
   @override
-  State<StatefulWidget> createState() => _bookmapEdit(mapId);
+  State<StatefulWidget> createState() => _bookmapEdit(mapId, searchData: searchData,);
 
 }
 
 class _bookmapEdit extends State<_EditingBookMap>{
   var mapId;
-  _bookmapEdit(this.mapId);
+  dynamic searchData;
+  _bookmapEdit(this.mapId, {this.searchData});
   final TextEditingController _titleEditingController = TextEditingController();
   final TextEditingController _sentencesEditingController = TextEditingController();
   final TextEditingController _keywordEditingController = TextEditingController();
@@ -75,6 +79,7 @@ class _bookmapEdit extends State<_EditingBookMap>{
           child: FutureBuilder<List<dynamic>>(
             future: _getMapDetail(mapId),
             builder: (context, snapshot){
+              //print('확인용: $searchData');
               if (snapshot.hasData){
                 List<dynamic> myBookMapDetail = [];
                 if (change == false){
@@ -316,7 +321,6 @@ class _bookmapEdit extends State<_EditingBookMap>{
                                       return Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Container(
-                                          color: Colors.redAccent,
                                           child: GestureDetector(
                                             onTap: () async {
                                               setState(() {
@@ -327,13 +331,11 @@ class _bookmapEdit extends State<_EditingBookMap>{
                                                 }
                                               });
                                               if (index1 == books.length - 1 && books.length != 5){
-                                                var newBook = await Navigator.push(
+                                                dynamic newBook = await Navigator.push(
                                                   context,
-                                                  MaterialPageRoute(builder: (context) => SearchInBookMap(mapId))
+                                                  MaterialPageRoute(builder: (context) => SearchInBookMap(mapId)),
                                               );
                                             }
-
-
                                             },
                                             child: Image.network(books[index1],
                                                 height: 130),
