@@ -1,10 +1,4 @@
 import 'dart:convert';
-
-import 'package:bookmap/pages/bookmap.dart';
-import 'package:bookmap/pages/bookmap_example.dart';
-import 'package:bookmap/pages/makingBookMap.dart';
-import 'package:bookmap/pages/search.dart';
-import 'package:bookmap/pages/search_detail_get.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookmap/pages/search_in_bookmap.dart';
 import 'myBookmapDetail.dart';
