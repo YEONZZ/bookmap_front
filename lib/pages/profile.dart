@@ -1,4 +1,5 @@
 import 'package:bookmap/pages/help_notice.dart';
+import 'package:bookmap/pages/memo_all_get.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:bookmap/design/color.dart';
@@ -186,7 +187,15 @@ class MyStatelessWidget extends StatelessWidget{
                           Row(children: [
                             const Expanded(flex: 10,
                                 child: Text('독서 노트 모아보기', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black),)),
-                            Expanded(flex: 1, child: IconButton(onPressed:(){}, icon: const Icon(Icons.add))) ],),
+                            Expanded(flex: 1, child: IconButton(onPressed:(){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MemoGet(token),
+                                ),
+                              );
+
+                            }, icon: const Icon(Icons.add))) ],),
                           if(memoContent1 != "" || memoTitle1 != "")
                           Card(
                               color: appcolor,
