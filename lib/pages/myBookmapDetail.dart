@@ -38,6 +38,7 @@ class _BookmapEx extends State<_myMapDetail>{
 
   @override
   void initState() {
+    super.initState();
     refreshList();
   }
 
@@ -202,7 +203,6 @@ class _BookmapEx extends State<_myMapDetail>{
                 ],
               ),
         )
-
       ),
     );
   }
