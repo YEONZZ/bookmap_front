@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:js_util';
 
 import 'package:bookmap/api_key.dart';
+import 'package:bookmap/pages/editingBookMap.dart';
 import 'package:bookmap/pages/scrapDetail.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebaseauth;
 import 'package:flutter/foundation.dart';
@@ -53,7 +55,8 @@ class _BookMapList extends State<BookMapList> {
             style: const TextStyle(color: Colors.black, fontSize: 16, fontStyle: FontStyle.normal, fontWeight: FontWeight.bold,)),
             actions: <Widget>[
               IconButton(onPressed: (){
-                Navigator.of(context).pushNamed('/new');
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context)=> MakingBookMap()));
                 }, icon: Icon(Icons.add))],
             bottom: TabBar(
               tabs: [
@@ -94,12 +97,15 @@ class MyMapData extends StatefulWidget {
 }
 
 class _MyMapData extends State<MyMapData>{
+
   ScrollController? _scrollController;
   List? data;
   int page = 1;
 
   @override
   void initState(){
+
+    WidgetsBinding.instance.addObserver(this as WidgetsBindingObserver);
     super.initState();
     data = List.empty(growable: true);
     _scrollController = ScrollController();
@@ -121,7 +127,6 @@ class _MyMapData extends State<MyMapData>{
         body: FutureBuilder<List<dynamic>>(
           future: _getbookmap(),
           builder: (context, snapshot){
-            print('확인!!!!!!!!!!');
             if (snapshot.hasData){
               List myBookmaps = snapshot.data!;
               return ListView.builder(

@@ -44,7 +44,7 @@ class _BookmapEx extends StatelessWidget{
               Container(
                 padding: EdgeInsets.only(top: 35, right: 15, left: 15, bottom: 15),
                 //decoration: BoxDecoration(),
-                color: Colors.orange.shade200,
+                color: Color(0xfff5eedc),
                 width: double.infinity,
                 height: 170,
                 child: Column(
@@ -111,7 +111,7 @@ class _BookmapEx extends StatelessWidget{
                         else{
                           print('memo$detailMemo');
                           return Container(
-                            decoration: BoxDecoration(color: Colors.orange.shade50),
+                            decoration: BoxDecoration(color: Color(0xfff5eedc),),
                             height: 130,
                             child: Row(
                               children: [
