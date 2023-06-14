@@ -597,7 +597,7 @@ class _SearchDetailGetPageState extends State<SearchDetailGetPage> {
               animation: false,
               lineHeight: 20.0,
               animationDuration: 2000,
-              percent: 0.15,
+              percent: double.parse('0.${homeData['readingPercentage']}'),
               center: Text("${homeData['readingPercentage']}%"),
               barRadius: const Radius.circular(16),
               progressColor: appcolor,
